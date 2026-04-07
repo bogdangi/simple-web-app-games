@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed Reader</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <a href="../../index.html" class="back-link" data-ui="backToGames">&larr; Back to Games</a>
+        <h1 data-ui="title">Speed Reader</h1>
+        <div class="stats">
+            <span id="wpm-display"></span>
+            <span id="level-display"></span>
+        </div>
+        <div class="lang-selector">
+            <label data-ui="language">Language</label>
+            <select id="lang-select">
+                <option value="en">English</option>
+                <option value="de">Deutsch</option>
+                <option value="uk">Українська</option>
+            </select>
+        </div>
+    </header>
+
+    <main>
+        <!-- Start Screen -->
+        <div id="screen-start" class="screen active">
+            <h2 data-ui="trainTitle">Train Your Reading Speed</h2>
+            <p data-ui="trainDescription">Each round has 3 parts. Read the text as it appears, then answer a question about it.</p>
+            <ul class="rules">
+                <li data-ui="ruleCorrect"></li>
+                <li data-ui="ruleWrong"></li>
+            </ul>
+            <h3 data-ui="roundScoring">Round scoring</h3>
+            <ul class="rules">
+                <li data-ui="score3"></li>
+                <li data-ui="score2"></li>
+                <li data-ui="score1"></li>
+                <li data-ui="score0"></li>
+            </ul>
+            <button id="btn-start" class="btn-primary" data-ui="startReading">Start Reading</button>
+        </div>
+
+        <!-- Reading Screen -->
+        <div id="screen-reading" class="screen">
+            <div class="part-indicator"><span data-ui="part">Part</span> <span id="part-number">1</span> / 3</div>
+            <div class="speed-indicator"><span data-ui="readingAt">Reading at</span> <span id="current-speed">100</span> <span data-ui="wpm">wpm</span></div>
+            <div id="reading-area">
+                <span id="reading-text"></span>
+            </div>
+            <div id="progress-bar-container">
+                <div id="progress-bar"></div>
+            </div>
+        </div>
+
+        <!-- Question Screen -->
+        <div id="screen-question" class="screen">
+            <h2 id="question-text"></h2>
+            <div id="options-container"></div>
+        </div>
+
+        <!-- Feedback Screen -->
+        <div id="screen-feedback" class="screen">
+            <div id="feedback-icon"></div>
+            <h2 id="feedback-title"></h2>
+            <p id="feedback-detail"></p>
+            <div id="proof-section" class="hidden">
+                <h3 data-ui="fromTheText">From the text:</h3>
+                <blockquote id="proof-text"></blockquote>
+            </div>
+            <button id="btn-next" class="btn-primary" data-ui="continue">Continue</button>
+        </div>
+
+        <!-- Round Summary Screen -->
+        <div id="screen-summary" class="screen">
+            <h2 data-ui="roundComplete">Round Complete</h2>
+            <div id="summary-results"></div>
+            <div id="summary-score"></div>
+            <div id="summary-wpm-change"></div>
+            <button id="btn-next-round" class="btn-primary" data-ui="nextRound">Next Round</button>
+        </div>
+    </main>
+
+    <script src="i18n.js"></script>
+    <script src="texts/en.js"></script>
+    <script src="texts/de.js"></script>
+    <script src="texts/uk.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
