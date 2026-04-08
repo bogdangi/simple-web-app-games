@@ -33,6 +33,12 @@ let partWpm = progress.wpm;
 let partResults = [];
 let wordTimer = null;
 
+// Reading-screen state (lifted to module level for controls)
+let isPaused = false;
+let readingWords = [];
+let readingWordIndex = 0;
+let readingChunkSize = 1;
+
 // DOM
 const wpmDisplay = document.getElementById('wpm-display');
 const levelDisplay = document.getElementById('level-display');
@@ -56,6 +62,7 @@ function updateUI() {
         const text = t(key);
         if (text) el.textContent = text;
     });
+    updatePauseButton();
     updateHeader();
 }
 
@@ -120,6 +127,38 @@ function getChunkDisplayTime(chunkWords, msPerWord) {
     return Math.max(Math.round(total), MIN_CHUNK_MS);
 }
 
+function showNextChunk() {
+    if (isPaused) return;
+    if (readingWordIndex >= readingWords.length) {
+        wordTimer = null;
+        setTimeout(() => showQuestion(), 500);
+        return;
+    }
+    const readingText = document.getElementById('reading-text');
+    const progressBar = document.getElementById('progress-bar');
+    const msPerWord = 60000 / partWpm;
+
+    const end = Math.min(readingWordIndex + readingChunkSize, readingWords.length);
+    const chunkWords = readingWords.slice(readingWordIndex, end);
+    readingText.classList.remove('word-appear');
+    void readingText.offsetWidth; // force reflow to restart animation
+    readingText.textContent = chunkWords.join(' ');
+    readingText.classList.add('word-appear');
+    readingWordIndex = end;
+    progressBar.style.width = ((readingWordIndex / readingWords.length) * 100) + '%';
+    wordTimer = setTimeout(showNextChunk, getChunkDisplayTime(chunkWords, msPerWord));
+}
+
+function updatePauseButton() {
+    const btn = document.getElementById('btn-pause');
+    btn.textContent = isPaused ? t('resume') : '⏸ ' + t('pause');
+    document.getElementById('btn-replay').setAttribute('aria-label', t('replay'));
+    document.getElementById('btn-replay').setAttribute('title', t('replay') + ' (R)');
+    btn.setAttribute('title', (isPaused ? t('resume') : t('pause')) + ' (Space)');
+    document.getElementById('btn-wpm-minus').setAttribute('title', '-10 wpm (←)');
+    document.getElementById('btn-wpm-plus').setAttribute('title', '+10 wpm (→)');
+}
+
 function startPart() {
     document.getElementById('part-number').textContent = currentPart + 1;
     document.getElementById('current-speed').textContent = partWpm;
@@ -127,36 +166,52 @@ function startPart() {
 
     const texts = getTexts();
     const part = texts[currentTextIndex].parts[currentPart];
-    const words = part.text.split(/\s+/);
-    const msPerWord = 60000 / partWpm;
+    readingWords = part.text.split(/\s+/);
+    readingWordIndex = 0;
+    readingChunkSize = Math.max(1, Math.min(3, Math.floor(partWpm / 150) + 1));
+    isPaused = false;
 
-    const readingText = document.getElementById('reading-text');
-    const progressBar = document.getElementById('progress-bar');
-    let wordIndex = 0;
-
-    const chunkSize = Math.max(1, Math.min(3, Math.floor(partWpm / 150) + 1));
-
-    readingText.textContent = '';
-    progressBar.style.width = '0%';
-
-    function showNextChunk() {
-        if (wordIndex >= words.length) {
-            wordTimer = null;
-            setTimeout(() => showQuestion(), 500);
-            return;
-        }
-        const end = Math.min(wordIndex + chunkSize, words.length);
-        const chunkWords = words.slice(wordIndex, end);
-        readingText.classList.remove('word-appear');
-        void readingText.offsetWidth; // force reflow to restart animation
-        readingText.textContent = chunkWords.join(' ');
-        readingText.classList.add('word-appear');
-        wordIndex = end;
-        progressBar.style.width = ((wordIndex / words.length) * 100) + '%';
-        wordTimer = setTimeout(showNextChunk, getChunkDisplayTime(chunkWords, msPerWord));
-    }
+    document.getElementById('reading-text').textContent = '';
+    document.getElementById('progress-bar').style.width = '0%';
+    updatePauseButton();
 
     showNextChunk();
+}
+
+function togglePause() {
+    if (!screens.reading.classList.contains('active')) return;
+    isPaused = !isPaused;
+    if (isPaused) {
+        if (wordTimer !== null) {
+            clearTimeout(wordTimer);
+            wordTimer = null;
+        }
+    } else {
+        showNextChunk();
+    }
+    updatePauseButton();
+}
+
+function replayPart() {
+    if (!screens.reading.classList.contains('active')) return;
+    if (wordTimer !== null) {
+        clearTimeout(wordTimer);
+        wordTimer = null;
+    }
+    readingWordIndex = 0;
+    isPaused = false;
+    document.getElementById('reading-text').textContent = '';
+    document.getElementById('progress-bar').style.width = '0%';
+    updatePauseButton();
+    showNextChunk();
+}
+
+function adjustWpm(delta) {
+    if (!screens.reading.classList.contains('active')) return;
+    partWpm = Math.max(MIN_WPM, partWpm + delta);
+    document.getElementById('current-speed').textContent = partWpm;
+    // Recalculate chunk size for the new speed (takes effect on the next chunk)
+    readingChunkSize = Math.max(1, Math.min(3, Math.floor(partWpm / 150) + 1));
 }
 
 function showQuestion() {
@@ -295,10 +350,43 @@ langSelect.addEventListener('change', () => {
         clearTimeout(wordTimer);
         wordTimer = null;
     }
+    isPaused = false;
     showScreen('start');
 });
 
 document.getElementById('btn-next-round').addEventListener('click', startRound);
 document.getElementById('btn-start').addEventListener('click', startRound);
+
+// Reading controls
+document.getElementById('btn-pause').addEventListener('click', togglePause);
+document.getElementById('btn-replay').addEventListener('click', replayPart);
+document.getElementById('btn-wpm-minus').addEventListener('click', () => adjustWpm(-10));
+document.getElementById('btn-wpm-plus').addEventListener('click', () => adjustWpm(10));
+
+// Keyboard shortcuts (active only on the reading screen)
+document.addEventListener('keydown', (e) => {
+    if (!screens.reading.classList.contains('active')) return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'BUTTON') return;
+    switch (e.key) {
+        case ' ':
+        case 'Enter':
+            e.preventDefault();
+            togglePause();
+            break;
+        case 'ArrowLeft':
+            e.preventDefault();
+            adjustWpm(-10);
+            break;
+        case 'ArrowRight':
+            e.preventDefault();
+            adjustWpm(10);
+            break;
+        case 'r':
+        case 'R':
+            e.preventDefault();
+            replayPart();
+            break;
+    }
+});
 
 updateUI();
