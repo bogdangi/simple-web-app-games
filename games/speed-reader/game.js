@@ -446,6 +446,7 @@ function showFeedback(isCorrect, part) {
     if (isDiagnostic) {
         proofSection.classList.add('hidden');
         if (isCorrect) {
+            // Record the speed the user just passed, then advance to the next step.
             diagnosticPassed = DIAGNOSTIC_SPEEDS[diagnosticStep];
             diagnosticStep++;
             icon.textContent = '\u2713';
@@ -457,6 +458,9 @@ function showFeedback(isCorrect, part) {
                 detail.textContent = t('diagnosticDone').replace('{wpm}', diagnosticPassed);
             }
         } else {
+            // User failed at this speed. diagnosticPassed holds the last speed they
+            // successfully passed (or MIN_WPM as the safe floor if they failed the
+            // very first step), so we stop here and use that as the calibrated speed.
             icon.textContent = '\u2717';
             icon.style.color = '#e74c3c';
             title.textContent = t('notQuite');
