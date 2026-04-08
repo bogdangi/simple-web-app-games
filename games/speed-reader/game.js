@@ -13,11 +13,15 @@ function getTodayDateString() {
 function loadProgress() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
-        const p = JSON.parse(saved);
-        if (p.phraseMode === undefined) p.phraseMode = false;
-        return p;
+        try {
+            const p = JSON.parse(saved);
+            if (p.phraseMode === undefined) p.phraseMode = false;
+            return p;
+        } catch (e) {
+            localStorage.removeItem(STORAGE_KEY);
+        }
     }
-    return { wpm: 100, level: 1, usedTexts: {}, lang: 'en', phraseMode: false, history: [], streak: { lastDate: null, count: 0 }, bestWpm: {}, langStats: {} };
+    return { wpm: 100, level: 1, points: 0, usedTexts: {}, lang: 'en', phraseMode: false, history: [], streak: { lastDate: null, count: 0 }, bestWpm: {}, langStats: {} };
 }
 
 function saveProgress(progress) {
@@ -25,6 +29,8 @@ function saveProgress(progress) {
 }
 
 const progress = loadProgress();
+// Migrate legacy saves: ensure points field exists
+if (progress.points === undefined) progress.points = 0;
 // Ensure usedTexts is per-language
 if (Array.isArray(progress.usedTexts)) {
     progress.usedTexts = { en: progress.usedTexts };
@@ -89,6 +95,7 @@ function updateUI() {
 function updateHeader() {
     wpmDisplay.textContent = `${t('speed')}: ${progress.wpm} ${t('wpm')}`;
     levelDisplay.textContent = `${t('level')}: ${progress.level}`;
+    document.getElementById('points-display').textContent = `${t('points')}: ${progress.points}`;
 }
 
 function getTexts() {
@@ -477,7 +484,9 @@ function showSummary() {
     }
 
     progress.wpm = newWpm;
-    progress.level++;
+    const pointsDelta = correctCount === 3 ? 2 : correctCount === 2 ? 1 : correctCount === 1 ? 0 : -1;
+    progress.points = Math.max(0, progress.points + pointsDelta);
+    progress.level = Math.floor(progress.points / 3) + 1;
     if (!progress.usedTexts[lang]) progress.usedTexts[lang] = [];
     progress.usedTexts[lang].push(currentTextIndex);
 
