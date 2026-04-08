@@ -170,8 +170,8 @@ function updatePauseButton() {
     document.getElementById('btn-replay').setAttribute('aria-label', t('replay'));
     document.getElementById('btn-replay').setAttribute('title', t('replay') + ' (R)');
     btn.setAttribute('title', (isPaused ? t('resume') : t('pause')) + ' (Space/Enter)');
-    document.getElementById('btn-wpm-minus').setAttribute('title', '-10 wpm (←)');
-    document.getElementById('btn-wpm-plus').setAttribute('title', '+10 wpm (→)');
+    document.getElementById('btn-wpm-minus').setAttribute('title', '-10 ' + t('wpm') + ' (←)');
+    document.getElementById('btn-wpm-plus').setAttribute('title', '+10 ' + t('wpm') + ' (→)');
 }
 
 function startPart() {
