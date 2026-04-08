@@ -33,7 +33,13 @@ const games = [
     }
 ];
 
-let lang = localStorage.getItem(LANG_KEY) || 'en';
+const SUPPORTED_LANGS = Object.keys(APP_UI);
+
+function normalizeLang(value) {
+    return SUPPORTED_LANGS.includes(value) ? value : 'en';
+}
+
+let lang = normalizeLang(localStorage.getItem(LANG_KEY) || 'en');
 
 function t(key) {
     return APP_UI[lang][key] || APP_UI.en[key] || key;
@@ -68,7 +74,8 @@ const langSelect = document.getElementById('lang-select');
 langSelect.value = lang;
 document.documentElement.lang = lang;
 langSelect.addEventListener('change', () => {
-    lang = langSelect.value;
+    lang = normalizeLang(langSelect.value);
+    langSelect.value = lang;
     document.documentElement.lang = lang;
     localStorage.setItem(LANG_KEY, lang);
     updateUI();
