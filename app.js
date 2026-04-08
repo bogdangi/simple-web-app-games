@@ -66,8 +66,10 @@ function renderGames() {
 
 const langSelect = document.getElementById('lang-select');
 langSelect.value = lang;
+document.documentElement.lang = lang;
 langSelect.addEventListener('change', () => {
     lang = langSelect.value;
+    document.documentElement.lang = lang;
     localStorage.setItem(LANG_KEY, lang);
     updateUI();
 });

@@ -12,7 +12,7 @@ const ASSET_PATHS = [
     'games/speed-reader/i18n.js',
     'games/speed-reader/texts/en.js',
     'games/speed-reader/texts/de.js',
-    // 'games/speed-reader/texts/uk.js', // TODO: add once Ukrainian texts are created
+    'games/speed-reader/texts/uk.js',
 ];
 
 self.addEventListener('install', (event) => {

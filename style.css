@@ -75,6 +75,26 @@ main {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
+.game-card:focus-visible {
+    outline: 2px solid #4ecca3;
+    outline-offset: 3px;
+}
+
+.lang-selector select:focus-visible {
+    outline: 2px solid #4ecca3;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .game-card {
+        transition: none;
+    }
+
+    .game-card:hover {
+        transform: none;
+    }
+}
+
 .game-card h2 {
     font-size: 1.3rem;
     margin-bottom: 0.5rem;

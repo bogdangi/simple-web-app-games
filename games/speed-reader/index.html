@@ -18,7 +18,7 @@
             <span id="level-display"></span>
         </div>
         <div class="lang-selector">
-            <label data-ui="language">Language</label>
+            <label for="lang-select" data-ui="language">Language</label>
             <select id="lang-select">
                 <option value="en">English</option>
                 <option value="de">Deutsch</option>
@@ -51,8 +51,8 @@
         <div id="screen-reading" class="screen">
             <div class="part-indicator"><span data-ui="part">Part</span> <span id="part-number">1</span> / 3</div>
             <div class="speed-indicator"><span data-ui="readingAt">Reading at</span> <span id="current-speed">100</span> <span data-ui="wpm">wpm</span></div>
-            <div id="reading-area">
-                <span id="reading-text"></span>
+            <div id="reading-area" aria-live="off" aria-label="Reading text">
+                <span id="reading-text" aria-live="polite" aria-atomic="true"></span>
             </div>
             <div id="progress-bar-container">
                 <div id="progress-bar"></div>
@@ -67,13 +67,13 @@
         </div>
 
         <!-- Question Screen -->
-        <div id="screen-question" class="screen">
+        <div id="screen-question" class="screen" aria-live="polite">
             <h2 id="question-text"></h2>
-            <div id="options-container"></div>
+            <div id="options-container" role="group" aria-labelledby="question-text"></div>
         </div>
 
         <!-- Feedback Screen -->
-        <div id="screen-feedback" class="screen">
+        <div id="screen-feedback" class="screen" aria-live="assertive">
             <div id="feedback-icon"></div>
             <h2 id="feedback-title"></h2>
             <p id="feedback-detail"></p>

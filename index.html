@@ -14,7 +14,7 @@
         <h1 data-ui="title">Simple Web Games</h1>
         <p data-ui="subtitle">Pick a game and have fun!</p>
         <div class="lang-selector">
-            <label data-ui="language">Language</label>
+            <label for="lang-select" data-ui="language">Language</label>
             <select id="lang-select">
                 <option value="en">English</option>
                 <option value="de">Deutsch</option>
@@ -23,7 +23,7 @@
         </div>
     </header>
     <main>
-        <div class="games-grid">
+        <div class="games-grid" aria-live="polite" aria-label="Games list">
             <!-- Game cards go here -->
         </div>
     </main>
