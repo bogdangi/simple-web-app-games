@@ -612,7 +612,7 @@ function buildStartAnalyticsHTML() {
 
     let chips = '';
     if (streak > 0) chips += `<span class="stat-chip">\uD83D\uDD25 ${streak} ${t('dayStreak')}</span>`;
-    if (last10.length > 0) chips += `<span class="stat-chip">${t('rollingAccuracy').split('(')[0].trim()}: ${rollingAcc}%</span>`;
+    if (last10.length > 0) chips += `<span class="stat-chip">${t('rollingAccuracy')}: ${rollingAcc}%</span>`;
     if (bestWpm) chips += `<span class="stat-chip">\u2605 ${bestWpm} ${t('wpm')}</span>`;
 
     return chips ? `<div class="start-stats-row">${chips}</div>` : '';
