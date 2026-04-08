@@ -58,7 +58,7 @@ TEXTS.en = [
                 correct: 2
             },
             {
-                text: "Honey is not just food. Throughout history, it has been used as medicine. Ancient Greeks used honey to treat wounds and burns. Modern science has confirmed that certain types of honey, particularly Manuka honey from New Zealand, have strong antibacterial properties. Hospitals now sometimes use medical grade honey on wounds that resist conventional antibiotics. Honey also soothes sore throats and coughs. Studies have shown that a spoonful of honey before bed can reduce nighttime coughing in children more effectively than some over the counter cough medicines. However, honey should never be given to infants under one year old due to the risk of botulism.",
+                text: "Honey is not just food. Throughout history, it has been used as medicine. Ancient Greeks used honey to treat wounds and burns. Modern science has confirmed that certain types of honey, particularly Manuka honey from New Zealand, have strong antibacterial properties. Hospitals now sometimes use medical grade honey on wounds that resist conventional antibiotics. Honey also soothes sore throats and coughs. Studies have shown that a spoonful of honey before bed can reduce nighttime coughing in children more effectively than some over-the-counter cough medicines. However, honey should never be given to infants under one year old due to the risk of botulism.",
                 question: "Which type of honey is noted for particularly strong antibacterial properties?",
                 options: ["Clover honey", "Wildflower honey", "Manuka honey from New Zealand", "Acacia honey from Europe"],
                 correct: 2
