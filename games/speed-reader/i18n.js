@@ -38,6 +38,10 @@ const UI = {
         speedDown: 'Speed: {old} \u2192 {new} wpm ({delta})',
         nextRound: 'Next Round',
         language: 'Language',
+        pause: 'Pause',
+        resume: 'Resume',
+        replay: 'Replay',
+        controlsHint: 'Space/Enter: pause · ←→: speed · R: replay',
     },
     de: {
         title: 'Schnell-Leser',
@@ -76,6 +80,10 @@ const UI = {
         speedDown: 'Tempo: {old} \u2192 {new} W/min ({delta})',
         nextRound: 'N\u00e4chste Runde',
         language: 'Sprache',
+        pause: 'Pause',
+        resume: 'Weiter',
+        replay: 'Wiederholen',
+        controlsHint: 'Leertaste/Enter: Pause · ←→: Tempo · R: Wiederholen',
     },
     uk: {
         title: '\u0428\u0432\u0438\u0434\u043a\u0435 \u0447\u0438\u0442\u0430\u043d\u043d\u044f',
@@ -114,5 +122,9 @@ const UI = {
         speedDown: '\u0428\u0432\u0438\u0434\u043a\u0456\u0441\u0442\u044c: {old} \u2192 {new} \u0441\u043b/\u0445\u0432 ({delta})',
         nextRound: '\u041d\u0430\u0441\u0442\u0443\u043f\u043d\u0438\u0439 \u0440\u0430\u0443\u043d\u0434',
         language: '\u041c\u043e\u0432\u0430',
+        pause: '\u041f\u0430\u0443\u0437\u0430',
+        resume: '\u041f\u0440\u043e\u0434\u043e\u0432\u0436\u0438\u0442\u0438',
+        replay: '\u041f\u043e\u0432\u0442\u043e\u0440\u0438\u0442\u0438',
+        controlsHint: '\u041f\u0440\u043e\u0431\u0456\u043b/Enter: \u043f\u0430\u0443\u0437\u0430 \u00b7 \u2190\u2192: \u0448\u0432\u0438\u0434\u043a\u0456\u0441\u0442\u044c \u00b7 R: \u043f\u043e\u0432\u0442\u043e\u0440',
     }
 };

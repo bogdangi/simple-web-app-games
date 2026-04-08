@@ -207,6 +207,43 @@ main {
     transition: width 0.1s linear;
 }
 
+.reading-controls {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+    margin-top: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.ctrl-btn {
+    background: #16213e;
+    border: 2px solid #2a3a5e;
+    border-radius: 8px;
+    color: #eee;
+    font-size: 0.95rem;
+    padding: 0.5rem 1.1rem;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    min-width: 3.2rem;
+}
+
+.ctrl-btn:hover {
+    border-color: #4ecca3;
+    background: #1c2a4a;
+}
+
+.ctrl-btn.pause-btn {
+    border-color: #4ecca3;
+    min-width: 6.5rem;
+}
+
+.controls-hint {
+    text-align: center;
+    color: #666;
+    font-size: 0.75rem;
+    margin-top: 0.8rem;
+}
+
 /* Question screen */
 #screen-question h2 {
     font-size: 1.3rem;
