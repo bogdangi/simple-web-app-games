@@ -470,8 +470,8 @@ function updateAnalytics(session) {
     ls[session.lang].totalCorrect += session.correctCount;
     ls[session.lang].totalParts += session.totalParts;
 
-    // Best comfortable WPM (≥ ACCURACY_HIGH correct)
-    if (session.correctCount >= 2) {
+    // Best comfortable WPM (accuracy ≥ ACCURACY_HIGH)
+    if (session.totalParts > 0 && session.correctCount / session.totalParts >= ACCURACY_HIGH) {
         if (!progress.bestWpm[session.lang] || session.wpm > progress.bestWpm[session.lang]) {
             progress.bestWpm[session.lang] = session.wpm;
         }
@@ -494,8 +494,8 @@ function computeRecommendedSpeed(langHistory, currentWpm) {
     const totalCorrect = last5.reduce((s, h) => s + h.correctCount, 0);
     const totalParts = last5.reduce((s, h) => s + h.totalParts, 0);
     const acc = totalParts > 0 ? totalCorrect / totalParts : 0;
-    if (acc >= 0.8) return currentWpm + 20;
-    if (acc < 0.5) return Math.max(MIN_WPM, currentWpm - 20);
+    if (acc >= ACCURACY_HIGH) return currentWpm + 20;
+    if (acc < ACCURACY_LOW) return Math.max(MIN_WPM, currentWpm - 20);
     return currentWpm;
 }
 
@@ -572,7 +572,7 @@ function buildAnalyticsHTML() {
         const p = l5.reduce((s, h) => s + h.totalParts, 0);
         return p > 0 ? c / p : 0;
     })();
-    const trendKey = last5acc >= 0.8 ? 'pushForward' : last5acc < 0.5 ? 'slowDown' : 'maintain';
+    const trendKey = last5acc >= ACCURACY_HIGH ? 'pushForward' : last5acc < ACCURACY_LOW ? 'slowDown' : 'maintain';
     html += `<div class="analytics-row">
         <span class="analytics-label">${t('recommendedSpeed')}</span>
         <strong class="analytics-value">${rec} ${t('wpm')}</strong>
