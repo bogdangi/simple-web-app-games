@@ -91,6 +91,28 @@ function startRound() {
     startPart();
 }
 
+// Returns the display duration (ms) for a chunk of words, scaling up for
+// longer words so that German compound words (and other long tokens) receive
+// proportionally more reading time.
+// Each word contributes: msPerWord * (wordLen / avgWordLen)^coefficient
+// The chunk total is the sum, so word count and word length both matter.
+//   coefficient 0   → flat timing (original behaviour)
+//   coefficient 0.5 → square-root scaling (default, gentle but effective)
+//   coefficient 1   → fully linear with word length
+const LENGTH_COEFFICIENT = 0.5;
+const AVG_WORD_LENGTH = 5; // typical average across Latin-script languages
+
+function getChunkDisplayTime(chunkWords, msPerWord) {
+    if (chunkWords.length === 0) return msPerWord;
+    // Sum the scaled display time for each word so that both word count and
+    // word length contribute to how long the chunk stays on screen.
+    const total = chunkWords.reduce((sum, word) => {
+        const scale = Math.pow(word.length / AVG_WORD_LENGTH, LENGTH_COEFFICIENT);
+        return sum + msPerWord * scale;
+    }, 0);
+    return Math.round(total);
+}
+
 function startPart() {
     document.getElementById('part-number').textContent = currentPart + 1;
     document.getElementById('current-speed').textContent = partWpm;
@@ -110,18 +132,21 @@ function startPart() {
     readingText.textContent = '';
     progressBar.style.width = '0%';
 
-    wordTimer = setInterval(() => {
-        const end = Math.min(wordIndex + chunkSize, words.length);
-        readingText.textContent = words.slice(wordIndex, end).join(' ');
-        wordIndex = end;
-        progressBar.style.width = ((wordIndex / words.length) * 100) + '%';
-
+    function showNextChunk() {
         if (wordIndex >= words.length) {
-            clearInterval(wordTimer);
             wordTimer = null;
             setTimeout(() => showQuestion(), 500);
+            return;
         }
-    }, msPerWord * chunkSize);
+        const end = Math.min(wordIndex + chunkSize, words.length);
+        const chunkWords = words.slice(wordIndex, end);
+        readingText.textContent = chunkWords.join(' ');
+        wordIndex = end;
+        progressBar.style.width = ((wordIndex / words.length) * 100) + '%';
+        wordTimer = setTimeout(showNextChunk, getChunkDisplayTime(chunkWords, msPerWord));
+    }
+
+    showNextChunk();
 }
 
 function showQuestion() {
@@ -257,7 +282,7 @@ langSelect.addEventListener('change', () => {
     updateUI();
     // If in the middle of reading, stop and go back to start
     if (wordTimer) {
-        clearInterval(wordTimer);
+        clearTimeout(wordTimer);
         wordTimer = null;
     }
     showScreen('start');
