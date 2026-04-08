@@ -12,8 +12,12 @@ function getTodayDateString() {
 
 function loadProgress() {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return JSON.parse(saved);
-    return { wpm: 100, level: 1, usedTexts: {}, lang: 'en', history: [], streak: { lastDate: null, count: 0 }, bestWpm: {}, langStats: {} };
+    if (saved) {
+        const p = JSON.parse(saved);
+        if (p.phraseMode === undefined) p.phraseMode = false;
+        return p;
+    }
+    return { wpm: 100, level: 1, usedTexts: {}, lang: 'en', phraseMode: false, history: [], streak: { lastDate: null, count: 0 }, bestWpm: {}, langStats: {} };
 }
 
 function saveProgress(progress) {
@@ -53,6 +57,7 @@ let lastChunkWords = []; // the chunk currently on screen, used to reschedule ti
 const wpmDisplay = document.getElementById('wpm-display');
 const levelDisplay = document.getElementById('level-display');
 const langSelect = document.getElementById('lang-select');
+const phraseModeToggle = document.getElementById('phrase-mode-toggle');
 const screens = {
     start: document.getElementById('screen-start'),
     reading: document.getElementById('screen-reading'),
@@ -124,6 +129,12 @@ const MIN_WORD_LENGTH = 3;
 // Absolute floor (ms) for any chunk regardless of WPM, to keep words legible.
 const MIN_CHUNK_MS = 220;
 
+// Pause multipliers applied after a chunk whose last word ends with punctuation.
+// These give the reader's brain time to process clause/sentence boundaries,
+// improving comprehension (see research on RSVP and sentence-boundary pauses).
+const SENTENCE_END_PAUSE = 1.5; // after . ! ?
+const CLAUSE_PAUSE = 1.2;       // after , ; :
+
 function getChunkDisplayTime(chunkWords, msPerWord) {
     if (chunkWords.length === 0) return Math.max(msPerWord, MIN_CHUNK_MS);
     // Sum the scaled display time for each word so that both word count and
@@ -135,6 +146,72 @@ function getChunkDisplayTime(chunkWords, msPerWord) {
         return sum + msPerWord * scale;
     }, 0);
     return Math.max(Math.round(total), MIN_CHUNK_MS);
+}
+
+// Returns a pause multiplier based on the trailing punctuation of the last
+// word in the chunk. Sentence-ending punctuation gets a longer pause to let
+// the reader process the completed thought.
+function getPunctuationPause(chunkWords) {
+    if (chunkWords.length === 0) return 1;
+    const last = chunkWords[chunkWords.length - 1];
+    if (/[.!?]$/.test(last)) return SENTENCE_END_PAUSE;
+    if (/[,;:]$/.test(last)) return CLAUSE_PAUSE;
+    return 1;
+}
+
+// Average letter length of words in a text (punctuation stripped), used to
+// estimate reading difficulty. Higher values indicate more complex vocabulary.
+function getTextComplexity(text) {
+    const words = text.split(/\s+/).filter(Boolean);
+    if (words.length === 0) return 0;
+    const totalChars = words.reduce((sum, w) => sum + w.replace(/[^\p{L}]/gu, '').length, 0);
+    return totalChars / words.length;
+}
+
+// Soft speed cap: very long-word texts (e.g. German compound nouns, technical
+// vocabulary) are capped at a lower WPM so comprehension doesn't suffer.
+// Returns the effective WPM to use and whether the cap was applied.
+function getEffectiveWpm(text, wpm) {
+    const complexity = getTextComplexity(text);
+    if (complexity >= 7.5) return { wpm: Math.min(wpm, 250), capped: wpm > 250 };
+    if (complexity >= 6.5) return { wpm: Math.min(wpm, 350), capped: wpm > 350 };
+    return { wpm, capped: false };
+}
+
+// Maximum words per chunk in standard (non-phrase) mode.
+// At lower speeds, 1-word chunks keep each word legible; as speed increases
+// the reader can handle 2–3 words at a time (up to MAX_CHUNK_SIZE).
+const MAX_CHUNK_SIZE = 3;
+const CHUNK_SIZE_WPM_STEP = 150; // one extra word per chunk for each step above 0
+
+// Split text into fixed-size chunks of chunkSize words each.
+function buildChunks(text, chunkSize) {
+    const words = text.split(/\s+/).filter(Boolean);
+    const chunks = [];
+    for (let i = 0; i < words.length; i += chunkSize) {
+        chunks.push(words.slice(i, i + chunkSize));
+    }
+    return chunks;
+}
+
+// Split text into phrase-boundary chunks. Each chunk ends at sentence-ending
+// punctuation (. ! ?) or clause punctuation (, ; :), and is capped at
+// MAX_PHRASE_WORDS words so individual chunks remain readable.
+const MAX_PHRASE_WORDS = 5;
+function buildPhraseChunks(text) {
+    const words = text.split(/\s+/).filter(Boolean);
+    const chunks = [];
+    let current = [];
+    for (const word of words) {
+        current.push(word);
+        const isBoundary = /[.!?,;:]$/.test(word);
+        if (isBoundary || current.length >= MAX_PHRASE_WORDS) {
+            chunks.push([...current]);
+            current = [];
+        }
+    }
+    if (current.length > 0) chunks.push(current);
+    return chunks;
 }
 
 let questionTimer = null;
@@ -163,16 +240,25 @@ function showNextChunk() {
     const progressBar = document.getElementById('progress-bar');
     const msPerWord = 60000 / partWpm;
 
-    const end = Math.min(readingWordIndex + readingChunkSize, readingWords.length);
-    const chunkWords = readingWords.slice(readingWordIndex, end);
+    let chunkWords;
+    if (readingChunkSize === null) {
+        // Phrase mode: find next phrase boundary
+        const remaining = readingWords.slice(readingWordIndex);
+        const phraseChunks = buildPhraseChunks(remaining.join(' '));
+        chunkWords = phraseChunks.length > 0 ? phraseChunks[0] : remaining;
+    } else {
+        const end = Math.min(readingWordIndex + readingChunkSize, readingWords.length);
+        chunkWords = readingWords.slice(readingWordIndex, end);
+    }
     readingText.classList.remove('word-appear');
     void readingText.offsetWidth; // force reflow to restart animation
     readingText.textContent = chunkWords.join(' ');
     readingText.classList.add('word-appear');
-    readingWordIndex = end;
+    readingWordIndex += chunkWords.length;
     lastChunkWords = chunkWords;
     progressBar.style.width = ((readingWordIndex / readingWords.length) * 100) + '%';
-    wordTimer = setTimeout(showNextChunk, getChunkDisplayTime(chunkWords, msPerWord));
+    const displayTime = Math.round(getChunkDisplayTime(chunkWords, msPerWord) * getPunctuationPause(chunkWords));
+    wordTimer = setTimeout(showNextChunk, displayTime);
 }
 
 function updatePauseButton() {
@@ -183,18 +269,24 @@ function updatePauseButton() {
     btn.setAttribute('title', (isPaused ? t('resume') : t('pause')) + ' (Space/Enter)');
     document.getElementById('btn-wpm-minus').setAttribute('title', '-10 ' + t('wpm') + ' (←)');
     document.getElementById('btn-wpm-plus').setAttribute('title', '+10 ' + t('wpm') + ' (→)');
+
 }
 
 function startPart() {
     document.getElementById('part-number').textContent = currentPart + 1;
-    document.getElementById('current-speed').textContent = partWpm;
     showScreen('reading');
 
     const texts = getTexts();
     const part = texts[currentTextIndex].parts[currentPart];
-    readingWords = part.text.split(/\s+/);
+    const { wpm: effectiveWpm, capped } = getEffectiveWpm(part.text, partWpm);
+    document.getElementById('current-speed').textContent = effectiveWpm;
+    document.getElementById('speed-capped-note').classList.toggle('hidden', !capped);
+
+    readingWords = part.text.split(/\s+/).filter(Boolean);
     readingWordIndex = 0;
-    readingChunkSize = Math.max(1, Math.min(3, Math.floor(partWpm / 150) + 1));
+    readingChunkSize = progress.phraseMode
+        ? null
+        : Math.max(1, Math.min(MAX_CHUNK_SIZE, Math.floor(effectiveWpm / CHUNK_SIZE_WPM_STEP) + 1));
     isPaused = false;
 
     document.getElementById('reading-text').textContent = '';
@@ -403,6 +495,13 @@ langSelect.addEventListener('change', () => {
     }
     isPaused = false;
     showScreen('start');
+});
+
+// Phrase mode toggle
+phraseModeToggle.checked = progress.phraseMode;
+phraseModeToggle.addEventListener('change', () => {
+    progress.phraseMode = phraseModeToggle.checked;
+    saveProgress(progress);
 });
 
 document.getElementById('btn-next-round').addEventListener('click', startRound);

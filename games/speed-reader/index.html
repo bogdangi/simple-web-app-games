@@ -12,7 +12,7 @@
 <body>
     <header>
         <a href="../../index.html" class="back-link" data-ui="backToGames">&larr; Back to Games</a>
-        <h1 data-ui="title">Speed Reader</h1>
+        <h1 data-ui="title">Fluency Trainer</h1>
         <div class="stats">
             <span id="wpm-display"></span>
             <span id="level-display"></span>
@@ -30,8 +30,9 @@
     <main>
         <!-- Start Screen -->
         <div id="screen-start" class="screen active">
-            <h2 data-ui="trainTitle">Train Your Reading Speed</h2>
+            <h2 data-ui="trainTitle">Train Your Reading Fluency</h2>
             <p data-ui="trainDescription">Each round has 3 parts. Read the text as it appears, then answer a question about it.</p>
+            <p class="fluency-note" data-ui="fluencyNote"></p>
             <div id="start-analytics"></div>
             <ul class="rules">
                 <li data-ui="ruleCorrect"></li>
@@ -44,13 +45,22 @@
                 <li data-ui="score1"></li>
                 <li data-ui="score0"></li>
             </ul>
+            <div class="settings-row">
+                <label class="phrase-toggle-label">
+                    <input type="checkbox" id="phrase-mode-toggle">
+                    <span data-ui="phraseMode">Phrase mode</span>
+                </label>
+                <span class="settings-note" data-ui="phraseModeHelp"></span>
+            </div>
             <button id="btn-start" class="btn-primary" data-ui="startReading">Start Reading</button>
         </div>
 
         <!-- Reading Screen -->
         <div id="screen-reading" class="screen">
             <div class="part-indicator"><span data-ui="part">Part</span> <span id="part-number">1</span> / 3</div>
-            <div class="speed-indicator"><span data-ui="readingAt">Reading at</span> <span id="current-speed">100</span> <span data-ui="wpm">wpm</span></div>
+            <div class="speed-indicator">
+                <span data-ui="readingAt">Reading at</span> <span id="current-speed">100</span> <span data-ui="wpm">wpm</span><span id="speed-capped-note" class="speed-capped hidden" data-ui="speedCapped"></span>
+            </div>
             <div id="reading-area" aria-labelledby="reading-area-label">
                 <span id="reading-area-label" data-ui="readingTextLabel" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">Reading text</span>
                 <span id="reading-text" aria-live="polite" aria-atomic="true"></span>

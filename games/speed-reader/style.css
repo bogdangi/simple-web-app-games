@@ -103,6 +103,47 @@ main {
     line-height: 1.6;
 }
 
+.fluency-note {
+    font-size: 0.85rem;
+    color: #888;
+    background: #16213e;
+    border-left: 3px solid #4ecca3;
+    border-radius: 0 6px 6px 0;
+    padding: 0.6rem 0.9rem;
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.phrase-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    color: #ccc;
+    font-size: 0.95rem;
+    user-select: none;
+}
+
+.phrase-toggle-label input[type="checkbox"] {
+    accent-color: #4ecca3;
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+}
+
+.settings-note {
+    font-size: 0.8rem;
+    color: #777;
+}
+
 .rules {
     list-style: none;
     margin-bottom: 1.5rem;
@@ -168,6 +209,11 @@ main {
     color: #4ecca3;
     font-size: 0.85rem;
     margin-bottom: 1.5rem;
+}
+
+.speed-capped {
+    color: #f39c12;
+    font-size: 0.8rem;
 }
 
 #reading-area {
