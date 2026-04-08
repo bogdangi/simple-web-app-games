@@ -30,12 +30,23 @@ header {
     color: #fff;
 }
 
+.back-link:focus-visible {
+    outline: 2px solid #4ecca3;
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
 .lang-selector {
     margin-top: 0.75rem;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+}
+
+.lang-selector select:focus-visible {
+    outline: 2px solid #4ecca3;
+    outline-offset: 2px;
 }
 
 .lang-selector label {
@@ -139,6 +150,11 @@ main {
     background: #3eb489;
 }
 
+.btn-primary:focus-visible {
+    outline: 2px solid #4ecca3;
+    outline-offset: 3px;
+}
+
 /* Reading screen */
 .part-indicator {
     text-align: center;
@@ -190,6 +206,15 @@ main {
     .word-appear {
         animation: none;
         transform: none;
+    }
+
+    .btn-primary,
+    .option-btn {
+        transition: none;
+    }
+
+    #progress-bar {
+        transition: none;
     }
 }
 #progress-bar-container {
@@ -272,6 +297,11 @@ main {
 .option-btn:hover {
     border-color: #4ecca3;
     background: #1c2a4a;
+}
+
+.option-btn:focus-visible {
+    outline: 2px solid #4ecca3;
+    outline-offset: 2px;
 }
 
 .option-btn.correct {

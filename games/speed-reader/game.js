@@ -377,8 +377,10 @@ function showSummary() {
 
 // Language switching
 langSelect.value = lang;
+document.documentElement.lang = lang;
 langSelect.addEventListener('change', () => {
     lang = langSelect.value;
+    document.documentElement.lang = lang;
     progress.lang = lang;
     saveProgress(progress);
     localStorage.setItem('app-language', lang);
@@ -425,6 +427,16 @@ document.addEventListener('keydown', (e) => {
             e.preventDefault();
             replayPart();
             break;
+    }
+});
+
+// Keyboard shortcuts: press 1-4 to pick an answer on the question screen
+document.addEventListener('keydown', (e) => {
+    if (!screens.question.classList.contains('active')) return;
+    const index = parseInt(e.key, 10) - 1;
+    const buttons = document.querySelectorAll('.option-btn:not([disabled])');
+    if (index >= 0 && index < buttons.length) {
+        buttons[index].click();
     }
 });
 
