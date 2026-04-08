@@ -484,7 +484,8 @@ function showSummary() {
     }
 
     progress.wpm = newWpm;
-    const pointsDelta = correctCount === 3 ? 2 : correctCount === 2 ? 1 : correctCount === 1 ? 0 : -1;
+    const pointsByScore = [-1, 0, 1, 2];
+    const pointsDelta = pointsByScore[correctCount];
     progress.points = Math.max(0, progress.points + pointsDelta);
     progress.level = Math.floor(progress.points / 3) + 1;
     if (!progress.usedTexts[lang]) progress.usedTexts[lang] = [];
