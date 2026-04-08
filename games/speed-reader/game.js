@@ -433,6 +433,8 @@ document.addEventListener('keydown', (e) => {
 // Keyboard shortcuts: press 1-4 to pick an answer on the question screen
 document.addEventListener('keydown', (e) => {
     if (!screens.question.classList.contains('active')) return;
+    const tag = document.activeElement && document.activeElement.tagName;
+    if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
     const index = parseInt(e.key, 10) - 1;
     const buttons = document.querySelectorAll('.option-btn:not([disabled])');
     if (index >= 0 && index < buttons.length) {
