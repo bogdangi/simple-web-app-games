@@ -186,6 +186,12 @@ main {
     animation: wordAppear 0.14s ease-out forwards;
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .word-appear {
+        animation: none;
+        transform: none;
+    }
+}
 #progress-bar-container {
     margin-top: 1.5rem;
     height: 4px;
