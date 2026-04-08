@@ -26,6 +26,29 @@ header p {
     font-size: 1.1rem;
 }
 
+.lang-selector {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.lang-selector label {
+    color: #aaa;
+    font-size: 0.85rem;
+}
+
+.lang-selector select {
+    background: #16213e;
+    color: #eee;
+    border: 1px solid #2a3a5e;
+    border-radius: 6px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
 main {
     max-width: 900px;
     margin: 0 auto;

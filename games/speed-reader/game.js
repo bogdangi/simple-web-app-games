@@ -18,7 +18,9 @@ if (Array.isArray(progress.usedTexts)) {
     saveProgress(progress);
 }
 
-let lang = progress.lang || 'en';
+// Sync language: URL param > localStorage from main page > saved progress
+const urlLang = new URLSearchParams(window.location.search).get('lang');
+let lang = urlLang || localStorage.getItem('app-language') || progress.lang || 'en';
 
 function t(key) {
     return UI[lang][key] || UI.en[key] || key;
@@ -251,6 +253,7 @@ langSelect.addEventListener('change', () => {
     lang = langSelect.value;
     progress.lang = lang;
     saveProgress(progress);
+    localStorage.setItem('app-language', lang);
     updateUI();
     // If in the middle of reading, stop and go back to start
     if (wordTimer) {
