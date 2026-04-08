@@ -9,6 +9,9 @@ function getTodayDateString() {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
+const MAX_WPM = 400;
+const DIAGNOSTIC_SPEEDS = [80, 120, 160, 200, 250];
+const RECENT_ROUNDS_COUNT = 7;
 
 function loadProgress() {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -19,17 +22,24 @@ function loadProgress() {
                 localStorage.removeItem(STORAGE_KEY);
             } else {
                 if (p.phraseMode === undefined) p.phraseMode = false;
+                if (!p.recentWpms) p.recentWpms = [];
                 return p;
             }
         } catch (e) {
             localStorage.removeItem(STORAGE_KEY);
         }
     }
-    return { wpm: 100, level: 1, points: 0, usedTexts: {}, lang: 'en', phraseMode: false, history: [], streak: { lastDate: null, count: 0 }, bestWpm: {}, langStats: {} };
+    return { wpm: 100, level: 1, points: 0, recentWpms: [], usedTexts: {}, lang: 'en', phraseMode: false, history: [], streak: { lastDate: null, count: 0 }, bestWpm: {}, langStats: {} };
 }
 
 function saveProgress(progress) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+}
+
+function computeLevel(recentWpms) {
+    if (!recentWpms || recentWpms.length === 0) return null;
+    const slice = recentWpms.slice(-RECENT_ROUNDS_COUNT);
+    return Math.round(slice.reduce((a, b) => a + b, 0) / slice.length);
 }
 
 const progress = loadProgress();
@@ -66,6 +76,10 @@ let readingChunkIndex = 0; // current position in readingChunks
 let effectivePartWpm = 100; // WPM after complexity cap; set in startPart, used everywhere
 let partComplexity = 0;   // avg word length for current part; computed once in startPart
 let lastChunkWords = []; // the chunk currently on screen, used to reschedule timer on WPM change
+// Diagnostic state
+let isDiagnostic = false;
+let diagnosticStep = 0;
+let diagnosticPassed = MIN_WPM;
 
 // DOM
 const wpmDisplay = document.getElementById('wpm-display');
@@ -94,12 +108,24 @@ function updateUI() {
     document.title = t('title');
     updatePauseButton();
     updateHeader();
+    updateSlider();
 }
 
 function updateHeader() {
     wpmDisplay.textContent = `${t('speed')}: ${progress.wpm} ${t('wpm')}`;
     levelDisplay.textContent = `${t('level')}: ${progress.level}`;
     document.getElementById('points-display').textContent = `${t('points')}: ${progress.points}`;
+    const avgWpm = computeLevel(progress.recentWpms);
+    if (avgWpm !== null) {
+        document.getElementById('points-display').textContent += ` | ${t('avg')}: ${avgWpm} ${t('wpm')}`;
+    }
+}
+
+function updateSlider() {
+    const slider = document.getElementById('speed-slider');
+    const display = document.getElementById('slider-value');
+    if (slider) slider.value = progress.wpm;
+    if (display) display.textContent = `${progress.wpm} ${t('wpm')}`;
 }
 
 function getTexts() {
@@ -417,6 +443,30 @@ function showFeedback(isCorrect, part) {
     const proofSection = document.getElementById('proof-section');
     const proofText = document.getElementById('proof-text');
 
+    if (isDiagnostic) {
+        proofSection.classList.add('hidden');
+        if (isCorrect) {
+            diagnosticPassed = DIAGNOSTIC_SPEEDS[diagnosticStep];
+            diagnosticStep++;
+            icon.textContent = '\u2713';
+            icon.style.color = '#4ecca3';
+            title.textContent = t('correct');
+            if (diagnosticStep < DIAGNOSTIC_SPEEDS.length) {
+                detail.textContent = t('diagnosticNext').replace('{wpm}', DIAGNOSTIC_SPEEDS[diagnosticStep]);
+            } else {
+                detail.textContent = t('diagnosticDone').replace('{wpm}', diagnosticPassed);
+            }
+        } else {
+            icon.textContent = '\u2717';
+            icon.style.color = '#e74c3c';
+            title.textContent = t('notQuite');
+            detail.textContent = t('diagnosticDone').replace('{wpm}', diagnosticPassed);
+            diagnosticStep = DIAGNOSTIC_SPEEDS.length; // mark as done
+        }
+        showScreen('feedback');
+        return;
+    }
+
     if (isCorrect) {
         icon.textContent = '\u2713';
         icon.style.color = '#4ecca3';
@@ -438,6 +488,14 @@ function showFeedback(isCorrect, part) {
 }
 
 document.getElementById('btn-next').addEventListener('click', () => {
+    if (isDiagnostic) {
+        if (diagnosticStep < DIAGNOSTIC_SPEEDS.length) {
+            runDiagnosticStep();
+        } else {
+            finishDiagnostic();
+        }
+        return;
+    }
     currentPart++;
     if (currentPart < 3) {
         startPart();
@@ -492,6 +550,11 @@ function showSummary() {
     const pointsDelta = pointsByScore[correctCount];
     progress.points = Math.max(0, progress.points + pointsDelta);
     progress.level = Math.floor(progress.points / 3) + 1;
+    if (!progress.recentWpms) progress.recentWpms = [];
+    progress.recentWpms.push(newWpm);
+    if (progress.recentWpms.length > RECENT_ROUNDS_COUNT) {
+        progress.recentWpms.shift();
+    }
     if (!progress.usedTexts[lang]) progress.usedTexts[lang] = [];
     progress.usedTexts[lang].push(currentTextIndex);
 
@@ -504,6 +567,40 @@ function showSummary() {
     document.getElementById('start-analytics').innerHTML = buildStartAnalyticsHTML();
 
     showScreen('summary');
+}
+
+// Diagnostic functions
+function startDiagnostic() {
+    isDiagnostic = true;
+    diagnosticStep = 0;
+    diagnosticPassed = MIN_WPM;
+    runDiagnosticStep();
+}
+
+function runDiagnosticStep() {
+    currentTextIndex = pickText();
+    currentPart = 0;
+    partWpm = DIAGNOSTIC_SPEEDS[diagnosticStep];
+    partResults = [];
+    const banner = document.getElementById('diagnostic-banner');
+    if (banner) {
+        banner.classList.remove('hidden');
+        banner.textContent = t('diagnosticStep')
+            .replace('{n}', diagnosticStep + 1)
+            .replace('{total}', DIAGNOSTIC_SPEEDS.length);
+    }
+    startPart();
+}
+
+function finishDiagnostic() {
+    isDiagnostic = false;
+    progress.wpm = Math.max(MIN_WPM, diagnosticPassed);
+    saveProgress(progress);
+    updateSlider();
+    updateHeader();
+    const banner = document.getElementById('diagnostic-banner');
+    if (banner) banner.classList.add('hidden');
+    showScreen('start');
 }
 
 // Language switching
@@ -527,12 +624,14 @@ langSelect.addEventListener('change', () => {
     localStorage.setItem('app-language', lang);
     updateUI();
     document.getElementById('start-analytics').innerHTML = buildStartAnalyticsHTML();
-    // If in the middle of reading, stop and go back to start
+    // If in the middle of reading or diagnostic, stop and go back to start
     if (wordTimer) {
         clearTimeout(wordTimer);
         wordTimer = null;
     }
     isPaused = false;
+    isDiagnostic = false;
+    document.getElementById('diagnostic-banner').classList.add('hidden');
     showScreen('start');
 });
 
@@ -545,6 +644,15 @@ phraseModeToggle.addEventListener('change', () => {
 
 document.getElementById('btn-next-round').addEventListener('click', startRound);
 document.getElementById('btn-start').addEventListener('click', startRound);
+document.getElementById('btn-calibrate').addEventListener('click', startDiagnostic);
+
+const speedSlider = document.getElementById('speed-slider');
+speedSlider.addEventListener('input', () => {
+    progress.wpm = parseInt(speedSlider.value, 10);
+    document.getElementById('slider-value').textContent = `${progress.wpm} ${t('wpm')}`;
+    saveProgress(progress);
+    updateHeader();
+});
 
 // Reading controls
 document.getElementById('btn-pause').addEventListener('click', togglePause);

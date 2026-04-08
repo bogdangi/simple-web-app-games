@@ -35,6 +35,13 @@
             <p data-ui="trainDescription">Each round has 3 parts. Read the text as it appears, then answer a question about it.</p>
             <p class="fluency-note" data-ui="fluencyNote"></p>
             <div id="start-analytics"></div>
+            <div class="speed-slider-section">
+                <label for="speed-slider" data-ui="startingSpeed">Starting speed</label>
+                <div class="slider-row">
+                    <input type="range" id="speed-slider" min="60" max="400" step="10" value="100">
+                    <span id="slider-value">100 wpm</span>
+                </div>
+            </div>
             <ul class="rules">
                 <li data-ui="ruleCorrect"></li>
                 <li data-ui="ruleWrong"></li>
@@ -53,11 +60,13 @@
                 </label>
                 <span id="phrase-mode-help" class="settings-note" data-ui="phraseModeHelp"></span>
             </div>
+            <button id="btn-calibrate" class="btn-secondary" data-ui="runDiagnostic">Find my speed</button>
             <button id="btn-start" class="btn-primary" data-ui="startReading">Start Reading</button>
         </div>
 
         <!-- Reading Screen -->
         <div id="screen-reading" class="screen">
+            <div id="diagnostic-banner" class="diagnostic-banner hidden"></div>
             <div class="part-indicator"><span data-ui="part">Part</span> <span id="part-number">1</span> / 3</div>
             <div class="speed-indicator">
                 <span data-ui="readingAt">Reading at</span> <span id="current-speed">100</span> <span data-ui="wpm">wpm</span> <span id="speed-capped-note" class="speed-capped hidden" data-ui="speedCapped"></span>
