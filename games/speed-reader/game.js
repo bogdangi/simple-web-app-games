@@ -151,7 +151,7 @@ function showNextChunk() {
 
 function updatePauseButton() {
     const btn = document.getElementById('btn-pause');
-    btn.textContent = isPaused ? t('resume') : '⏸ ' + t('pause');
+    btn.textContent = isPaused ? '▶ ' + t('resume') : '⏸ ' + t('pause');
     document.getElementById('btn-replay').setAttribute('aria-label', t('replay'));
     document.getElementById('btn-replay').setAttribute('title', t('replay') + ' (R)');
     btn.setAttribute('title', (isPaused ? t('resume') : t('pause')) + ' (Space)');
@@ -210,8 +210,12 @@ function adjustWpm(delta) {
     if (!screens.reading.classList.contains('active')) return;
     partWpm = Math.max(MIN_WPM, partWpm + delta);
     document.getElementById('current-speed').textContent = partWpm;
-    // Recalculate chunk size for the new speed (takes effect on the next chunk)
     readingChunkSize = Math.max(1, Math.min(3, Math.floor(partWpm / 150) + 1));
+    // Apply new speed immediately by restarting the pending chunk timer
+    if (!isPaused && wordTimer !== null) {
+        clearTimeout(wordTimer);
+        wordTimer = setTimeout(showNextChunk, 50);
+    }
 }
 
 function showQuestion() {
@@ -366,7 +370,7 @@ document.getElementById('btn-wpm-plus').addEventListener('click', () => adjustWp
 // Keyboard shortcuts (active only on the reading screen)
 document.addEventListener('keydown', (e) => {
     if (!screens.reading.classList.contains('active')) return;
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'BUTTON') return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
     switch (e.key) {
         case ' ':
         case 'Enter':
