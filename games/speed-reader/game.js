@@ -1,10 +1,19 @@
 const STORAGE_KEY = 'speed-reader-progress';
 const MIN_WPM = 60;
+// Accuracy thresholds: fraction of parts answered correctly
+const ACCURACY_HIGH = 2 / 3; // comfortable / good progress
+const ACCURACY_LOW  = 1 / 3; // struggling
+
+// Returns today's date as a local-time YYYY-MM-DD string.
+function getTodayDateString() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
 
 function loadProgress() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) return JSON.parse(saved);
-    return { wpm: 100, level: 1, usedTexts: {}, lang: 'en' };
+    return { wpm: 100, level: 1, usedTexts: {}, lang: 'en', history: [], streak: { lastDate: null, count: 0 }, bestWpm: {}, langStats: {} };
 }
 
 function saveProgress(progress) {
@@ -354,8 +363,14 @@ function showSummary() {
     progress.level++;
     if (!progress.usedTexts[lang]) progress.usedTexts[lang] = [];
     progress.usedTexts[lang].push(currentTextIndex);
+
+    updateAnalytics({ lang, wpm: newWpm, correctCount, totalParts: 3 });
+
     saveProgress(progress);
     updateHeader();
+
+    document.getElementById('analytics-section').innerHTML = buildAnalyticsHTML();
+    document.getElementById('start-analytics').innerHTML = buildStartAnalyticsHTML();
 
     showScreen('summary');
 }
@@ -368,6 +383,7 @@ langSelect.addEventListener('change', () => {
     saveProgress(progress);
     localStorage.setItem('app-language', lang);
     updateUI();
+    document.getElementById('start-analytics').innerHTML = buildStartAnalyticsHTML();
     // If in the middle of reading, stop and go back to start
     if (wordTimer) {
         clearTimeout(wordTimer);
@@ -413,3 +429,191 @@ document.addEventListener('keydown', (e) => {
 });
 
 updateUI();
+document.getElementById('start-analytics').innerHTML = buildStartAnalyticsHTML();
+
+// ── Analytics helpers ─────────────────────────────────────────────────────────
+
+function updateAnalytics(session) {
+    // Ensure fields exist for old saves
+    if (!progress.history) progress.history = [];
+    if (!progress.streak) progress.streak = { lastDate: null, count: 0 };
+    if (!progress.bestWpm) progress.bestWpm = {};
+    if (!progress.langStats) progress.langStats = {};
+
+    const today = getTodayDateString();
+
+    // History (keep last 50 entries)
+    progress.history.push({
+        date: today,
+        lang: session.lang,
+        wpm: session.wpm,
+        correctCount: session.correctCount,
+        totalParts: session.totalParts,
+    });
+    if (progress.history.length > 50) progress.history = progress.history.slice(-50);
+
+    // Streak
+    const last = progress.streak.lastDate;
+    if (last === today) {
+        // already practiced today — no change
+    } else if (isDateYesterday(last, today)) {
+        progress.streak.count++;
+        progress.streak.lastDate = today;
+    } else {
+        progress.streak = { lastDate: today, count: 1 };
+    }
+
+    // Per-language stats
+    const ls = progress.langStats;
+    if (!ls[session.lang]) ls[session.lang] = { sessions: 0, totalCorrect: 0, totalParts: 0 };
+    ls[session.lang].sessions++;
+    ls[session.lang].totalCorrect += session.correctCount;
+    ls[session.lang].totalParts += session.totalParts;
+
+    // Best comfortable WPM (≥ ACCURACY_HIGH correct)
+    if (session.correctCount >= 2) {
+        if (!progress.bestWpm[session.lang] || session.wpm > progress.bestWpm[session.lang]) {
+            progress.bestWpm[session.lang] = session.wpm;
+        }
+    }
+}
+
+function isDateYesterday(dateStr, today) {
+    if (!dateStr) return false;
+    // Parse today's local YYYY-MM-DD and compute yesterday using local date arithmetic
+    // to avoid UTC-offset surprises from toISOString().
+    const [y, m, d] = today.split('-').map(Number);
+    const prev = new Date(y, m - 1, d - 1);
+    const prevStr = `${prev.getFullYear()}-${String(prev.getMonth() + 1).padStart(2, '0')}-${String(prev.getDate()).padStart(2, '0')}`;
+    return dateStr === prevStr;
+}
+
+function computeRecommendedSpeed(langHistory, currentWpm) {
+    const last5 = langHistory.slice(-5);
+    if (last5.length === 0) return currentWpm;
+    const totalCorrect = last5.reduce((s, h) => s + h.correctCount, 0);
+    const totalParts = last5.reduce((s, h) => s + h.totalParts, 0);
+    const acc = totalParts > 0 ? totalCorrect / totalParts : 0;
+    if (acc >= 0.8) return currentWpm + 20;
+    if (acc < 0.5) return Math.max(MIN_WPM, currentWpm - 20);
+    return currentWpm;
+}
+
+function buildSpeedChart(sessions) {
+    if (sessions.length === 0) return '';
+    const maxWpm = Math.max(...sessions.map(h => h.wpm), MIN_WPM);
+    const H = 56, barW = 18, gap = 4;
+    const W = sessions.length * (barW + gap) - gap;
+    const bars = sessions.map((h, i) => {
+        const barH = Math.max(4, Math.round((h.wpm / maxWpm) * H));
+        const x = i * (barW + gap);
+        const y = H - barH;
+        const acc = h.correctCount / h.totalParts;
+        const color = acc >= ACCURACY_HIGH ? '#4ecca3' : acc >= ACCURACY_LOW ? '#f39c12' : '#e74c3c';
+        return `<rect x="${x}" y="${y}" width="${barW}" height="${barH}" fill="${color}" rx="2"><title>${h.wpm} ${t('wpm')}, ${Math.round(acc * 100)}%</title></rect>`;
+    }).join('');
+    return `<svg class="speed-chart-svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-hidden="true">${bars}</svg>`;
+}
+
+function buildAnalyticsHTML() {
+    if (!progress.history) return '';
+    const langHistory = progress.history.filter(h => h.lang === lang);
+    const last10 = langHistory.slice(-10);
+
+    let html = `<h3 class="analytics-title">${t('analytics')}</h3>`;
+
+    if (last10.length === 0) {
+        html += `<p class="analytics-empty">${t('noHistory')}</p>`;
+        return html;
+    }
+
+    // Streak
+    const streak = (progress.streak && progress.streak.count) || 0;
+    if (streak > 0) {
+        html += `<div class="analytics-streak">\uD83D\uDD25 ${streak} ${t('dayStreak')}</div>`;
+    }
+
+    // Rolling accuracy for current lang
+    const totalCorrect = last10.reduce((s, h) => s + h.correctCount, 0);
+    const totalParts10 = last10.reduce((s, h) => s + h.totalParts, 0);
+    const rollingAcc = totalParts10 > 0 ? Math.round((totalCorrect / totalParts10) * 100) : 0;
+    html += `<div class="analytics-row">
+        <span class="analytics-label">${t('rollingAccuracy')}</span>
+        <div class="acc-bar-wrap"><div class="acc-bar" style="width:${rollingAcc}%"></div></div>
+        <span class="acc-value">${rollingAcc}%</span>
+    </div>`;
+
+    // Speed vs comprehension chart
+    html += `<div class="analytics-row analytics-chart-wrap">
+        <span class="analytics-label">${t('speedHistory')}</span>
+        ${buildSpeedChart(last10)}
+        <span class="chart-legend">
+            <span class="dot dot-green"></span>&ge;2/3
+            <span class="dot dot-yellow"></span>1/3
+            <span class="dot dot-red"></span>0/3
+        </span>
+    </div>`;
+
+    // Best comfortable speed
+    const bestWpm = progress.bestWpm && progress.bestWpm[lang];
+    if (bestWpm) {
+        html += `<div class="analytics-row">
+            <span class="analytics-label">${t('bestComfortableSpeed')}</span>
+            <strong class="analytics-value">${bestWpm} ${t('wpm')}</strong>
+        </div>`;
+    }
+
+    // Recommended speed
+    const rec = computeRecommendedSpeed(langHistory, progress.wpm);
+    const last5acc = (() => {
+        const l5 = langHistory.slice(-5);
+        if (!l5.length) return 0;
+        const c = l5.reduce((s, h) => s + h.correctCount, 0);
+        const p = l5.reduce((s, h) => s + h.totalParts, 0);
+        return p > 0 ? c / p : 0;
+    })();
+    const trendKey = last5acc >= 0.8 ? 'pushForward' : last5acc < 0.5 ? 'slowDown' : 'maintain';
+    html += `<div class="analytics-row">
+        <span class="analytics-label">${t('recommendedSpeed')}</span>
+        <strong class="analytics-value">${rec} ${t('wpm')}</strong>
+        <span class="analytics-trend ${trendKey}">${t(trendKey)}</span>
+    </div>`;
+
+    // Per-language stats (only if more than one language used)
+    const ls = progress.langStats || {};
+    const langs = Object.keys(ls);
+    if (langs.length > 1) {
+        html += `<div class="analytics-row lang-stats-wrap">
+            <span class="analytics-label">${t('langStats')}</span>
+            <div class="lang-stats-grid">
+            ${langs.map(l => {
+                const s = ls[l];
+                const a = s.totalParts > 0 ? Math.round((s.totalCorrect / s.totalParts) * 100) : 0;
+                return `<div class="lang-stat-item"><span class="lang-name">${l}</span><span>${s.sessions} ${t('sessions')}</span><span class="acc-chip ${a >= 70 ? 'chip-green' : a >= 50 ? 'chip-yellow' : 'chip-red'}">${a}%</span></div>`;
+            }).join('')}
+            </div>
+        </div>`;
+    }
+
+    return html;
+}
+
+function buildStartAnalyticsHTML() {
+    if (!progress.history || progress.history.length === 0) return '';
+    const streak = (progress.streak && progress.streak.count) || 0;
+    const langHistory = progress.history.filter(h => h.lang === lang);
+    const last10 = langHistory.slice(-10);
+    if (last10.length === 0 && streak === 0) return '';
+
+    const totalCorrect = last10.reduce((s, h) => s + h.correctCount, 0);
+    const totalParts = last10.reduce((s, h) => s + h.totalParts, 0);
+    const rollingAcc = totalParts > 0 ? Math.round((totalCorrect / totalParts) * 100) : 0;
+    const bestWpm = (progress.bestWpm && progress.bestWpm[lang]) || null;
+
+    let chips = '';
+    if (streak > 0) chips += `<span class="stat-chip">\uD83D\uDD25 ${streak} ${t('dayStreak')}</span>`;
+    if (last10.length > 0) chips += `<span class="stat-chip">${t('rollingAccuracy').split('(')[0].trim()}: ${rollingAcc}%</span>`;
+    if (bestWpm) chips += `<span class="stat-chip">\u2605 ${bestWpm} ${t('wpm')}</span>`;
+
+    return chips ? `<div class="start-stats-row">${chips}</div>` : '';
+}
