@@ -101,16 +101,23 @@ function startRound() {
 //   coefficient 1   → fully linear with word length
 const LENGTH_COEFFICIENT = 0.5;
 const AVG_WORD_LENGTH = 5; // typical average across Latin-script languages
+// Very short words (1–2 chars) are treated as at least this many chars so
+// that single letters like "I" or "a" don't flash by too quickly.
+const MIN_WORD_LENGTH = 3;
+// Absolute floor (ms) for any chunk regardless of WPM, to keep words legible.
+const MIN_CHUNK_MS = 220;
 
 function getChunkDisplayTime(chunkWords, msPerWord) {
     if (chunkWords.length === 0) return msPerWord;
     // Sum the scaled display time for each word so that both word count and
     // word length contribute to how long the chunk stays on screen.
+    // Short words are floored to MIN_WORD_LENGTH to avoid overly brief flashes.
     const total = chunkWords.reduce((sum, word) => {
-        const scale = Math.pow(word.length / AVG_WORD_LENGTH, LENGTH_COEFFICIENT);
+        const len = Math.max(word.length, MIN_WORD_LENGTH);
+        const scale = Math.pow(len / AVG_WORD_LENGTH, LENGTH_COEFFICIENT);
         return sum + msPerWord * scale;
     }, 0);
-    return Math.round(total);
+    return Math.max(Math.round(total), MIN_CHUNK_MS);
 }
 
 function startPart() {
@@ -140,7 +147,10 @@ function startPart() {
         }
         const end = Math.min(wordIndex + chunkSize, words.length);
         const chunkWords = words.slice(wordIndex, end);
+        readingText.classList.remove('word-appear');
+        void readingText.offsetWidth; // force reflow to restart animation
         readingText.textContent = chunkWords.join(' ');
+        readingText.classList.add('word-appear');
         wordIndex = end;
         progressBar.style.width = ((wordIndex / words.length) * 100) + '%';
         wordTimer = setTimeout(showNextChunk, getChunkDisplayTime(chunkWords, msPerWord));
