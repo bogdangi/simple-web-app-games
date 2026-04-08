@@ -38,6 +38,7 @@ let isPaused = false;
 let readingWords = [];
 let readingWordIndex = 0;
 let readingChunkSize = 1;
+let lastChunkWords = []; // the chunk currently on screen, used to reschedule timer on WPM change
 
 // DOM
 const wpmDisplay = document.getElementById('wpm-display');
@@ -160,6 +161,7 @@ function showNextChunk() {
     readingText.textContent = chunkWords.join(' ');
     readingText.classList.add('word-appear');
     readingWordIndex = end;
+    lastChunkWords = chunkWords;
     progressBar.style.width = ((readingWordIndex / readingWords.length) * 100) + '%';
     wordTimer = setTimeout(showNextChunk, getChunkDisplayTime(chunkWords, msPerWord));
 }
@@ -226,10 +228,12 @@ function adjustWpm(delta) {
     partWpm = Math.max(MIN_WPM, partWpm + delta);
     document.getElementById('current-speed').textContent = partWpm;
     readingChunkSize = Math.max(1, Math.min(3, Math.floor(partWpm / 150) + 1));
-    // Apply new speed immediately by restarting the pending chunk timer
+    // Reschedule the pending chunk timer using the new WPM so the display
+    // duration of the current on-screen chunk reflects the updated speed.
     if (!isPaused && wordTimer !== null) {
         clearTimeout(wordTimer);
-        wordTimer = setTimeout(showNextChunk, 50);
+        const msPerWord = 60000 / partWpm;
+        wordTimer = setTimeout(showNextChunk, getChunkDisplayTime(lastChunkWords, msPerWord));
     }
 }
 
