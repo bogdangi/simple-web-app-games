@@ -549,8 +549,8 @@ function buildAnalyticsHTML() {
         ${buildSpeedChart(last10)}
         <span class="chart-legend">
             <span class="dot dot-green"></span>&ge;2/3
-            <span class="dot dot-yellow"></span>1/3
-            <span class="dot dot-red"></span>0/3
+            <span class="dot dot-yellow"></span>&ge;1/3
+            <span class="dot dot-red"></span>&lt;1/3
         </span>
     </div>`;
 
