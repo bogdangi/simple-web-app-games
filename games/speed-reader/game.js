@@ -127,11 +127,26 @@ function getChunkDisplayTime(chunkWords, msPerWord) {
     return Math.max(Math.round(total), MIN_CHUNK_MS);
 }
 
+let questionTimer = null;
+
+function clearQuestionTimer() {
+    if (questionTimer) {
+        clearTimeout(questionTimer);
+        questionTimer = null;
+    }
+}
+
 function showNextChunk() {
     if (isPaused) return;
     if (readingWordIndex >= readingWords.length) {
         wordTimer = null;
-        setTimeout(() => showQuestion(), 500);
+        clearQuestionTimer();
+        questionTimer = setTimeout(() => {
+            questionTimer = null;
+            if (!isPaused && readingWordIndex >= readingWords.length) {
+                showQuestion();
+            }
+        }, 500);
         return;
     }
     const readingText = document.getElementById('reading-text');
