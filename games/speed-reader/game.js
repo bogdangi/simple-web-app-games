@@ -108,7 +108,7 @@ const MIN_WORD_LENGTH = 3;
 const MIN_CHUNK_MS = 220;
 
 function getChunkDisplayTime(chunkWords, msPerWord) {
-    if (chunkWords.length === 0) return msPerWord;
+    if (chunkWords.length === 0) return Math.max(msPerWord, MIN_CHUNK_MS);
     // Sum the scaled display time for each word so that both word count and
     // word length contribute to how long the chunk stays on screen.
     // Short words are floored to MIN_WORD_LENGTH to avoid overly brief flashes.
