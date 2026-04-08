@@ -376,10 +376,20 @@ function showSummary() {
 }
 
 // Language switching
+function normalizeLang(value) {
+    const supportedLangs = Array.from(langSelect.options).map((option) => option.value);
+    const fallbackLang = supportedLangs.includes(progress.lang)
+        ? progress.lang
+        : (supportedLangs.includes('en') ? 'en' : supportedLangs[0]);
+    return supportedLangs.includes(value) ? value : fallbackLang;
+}
+
+lang = normalizeLang(lang);
 langSelect.value = lang;
 document.documentElement.lang = lang;
 langSelect.addEventListener('change', () => {
-    lang = langSelect.value;
+    lang = normalizeLang(langSelect.value);
+    langSelect.value = lang;
     document.documentElement.lang = lang;
     progress.lang = lang;
     saveProgress(progress);
