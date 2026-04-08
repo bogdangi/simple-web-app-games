@@ -192,7 +192,6 @@ main {
     flex: 1;
     accent-color: #4ecca3;
     cursor: pointer;
-    height: 6px;
 }
 
 #slider-value {
