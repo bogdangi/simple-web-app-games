@@ -15,8 +15,12 @@ function loadProgress() {
     if (saved) {
         try {
             const p = JSON.parse(saved);
-            if (p.phraseMode === undefined) p.phraseMode = false;
-            return p;
+            if (typeof p !== 'object' || p === null || Array.isArray(p)) {
+                localStorage.removeItem(STORAGE_KEY);
+            } else {
+                if (p.phraseMode === undefined) p.phraseMode = false;
+                return p;
+            }
         } catch (e) {
             localStorage.removeItem(STORAGE_KEY);
         }
