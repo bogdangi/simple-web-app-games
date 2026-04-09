@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word in Context</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="../../manifest.json">
+    <meta name="theme-color" content="#1a1a2e">
+    <link rel="apple-touch-icon" href="../../icons/icon-192.png">
+</head>
+<body>
+    <header>
+        <a href="../../index.html" class="back-link" data-ui="backToGames">&larr; Back to Games</a>
+        <h1 data-ui="title">Word in Context</h1>
+        <div class="stats">
+            <span id="score-display"></span>
+            <span id="streak-display"></span>
+        </div>
+        <div class="lang-selector">
+            <label for="lang-select" data-ui="language">Language</label>
+            <select id="lang-select">
+                <option value="en">English</option>
+                <option value="de">Deutsch</option>
+                <option value="uk">Українська</option>
+            </select>
+        </div>
+    </header>
+
+    <main>
+        <!-- Start Screen -->
+        <div id="screen-start" class="screen active">
+            <h2 data-ui="title">Word in Context</h2>
+            <p class="tagline" data-ui="tagline"></p>
+            <div class="rules-box">
+                <h3 data-ui="rulesTitle">How to play</h3>
+                <ul class="rules">
+                    <li data-ui="rule1"></li>
+                    <li data-ui="rule2"></li>
+                    <li data-ui="rule3"></li>
+                </ul>
+            </div>
+            <div class="questions-selector">
+                <label for="questions-count" data-ui="questionsPerRound">Questions per round</label>
+                <div class="selector-row">
+                    <button class="qty-btn" id="qty-minus" aria-label="Decrease">−</button>
+                    <span id="qty-value">10</span>
+                    <button class="qty-btn" id="qty-plus" aria-label="Increase">+</button>
+                </div>
+            </div>
+            <button id="btn-start" class="btn-primary" data-ui="startGame">Start Game</button>
+        </div>
+
+        <!-- Question Screen -->
+        <div id="screen-question" class="screen" aria-live="polite">
+            <div class="progress-info">
+                <span id="question-counter"></span>
+                <div id="progress-bar-container" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                    <div id="progress-bar"></div>
+                </div>
+            </div>
+            <div id="sentence-area" aria-label="">
+                <p id="sentence-text"></p>
+            </div>
+            <div id="options-container" role="group" aria-labelledby="sentence-text"></div>
+        </div>
+
+        <!-- Feedback Screen -->
+        <div id="screen-feedback" class="screen" aria-live="assertive">
+            <div id="feedback-icon"></div>
+            <h2 id="feedback-title"></h2>
+            <div id="correct-word-box" class="hidden">
+                <span data-ui="correctWas" id="correct-was-label"></span>
+                <strong id="correct-word-value"></strong>
+            </div>
+            <div id="explanation-box">
+                <p id="explanation-label"></p>
+                <p id="explanation-text"></p>
+            </div>
+            <button id="btn-next" class="btn-primary" data-ui="next">Next</button>
+        </div>
+
+        <!-- Summary Screen -->
+        <div id="screen-summary" class="screen" aria-live="polite">
+            <h2 data-ui="roundComplete">Round Complete!</h2>
+            <div id="summary-score-display"></div>
+            <div id="summary-message"></div>
+            <div id="summary-breakdown"></div>
+            <button id="btn-play-again" class="btn-primary" data-ui="playAgain">Play Again</button>
+        </div>
+    </main>
+
+    <script src="i18n.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
