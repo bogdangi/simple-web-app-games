@@ -238,7 +238,8 @@ function showNextChunk() {
     }
     const readingText = document.getElementById('reading-text');
     const progressBar = document.getElementById('progress-bar');
-    const msPerWord = 60000 / partWpm;
+    const effectivePartWpm = getEffectiveWpm();
+    const msPerWord = 60000 / effectivePartWpm;
 
     let chunkWords;
     if (readingChunkSize === null) {
