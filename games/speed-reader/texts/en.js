@@ -35,7 +35,7 @@ TEXTS.en = [
                 options: ["A monk during evening prayers", "A merchant traveling through Ethiopia", "A goat herder named Kaldi", "An Arabian spice trader"],
                 correct: 2,
                 type: "fact",
-                proof: "legend says a goat herder named Kaldi noticed his goats became energetic after eating berries from a certain tree."
+                proof: "The drink we know today has its origins in Ethiopia, where legend says a goat herder named Kaldi noticed his goats became energetic after eating berries from a certain tree."
             },
             {
                 text: "The journey from coffee cherry to your cup is surprisingly long. After harvesting, the beans must be extracted from the fruit, then dried, sorted, and roasted. Roasting is where the magic happens. Green coffee beans have almost no flavor. The roasting process triggers chemical reactions that create over eight hundred different compounds responsible for coffee's complex taste and aroma. Light roasts actually contain more caffeine than dark roasts, because the longer roasting process breaks down more caffeine molecules.",
@@ -219,7 +219,7 @@ TEXTS.en = [
                 options: ["About fifty percent", "About seventy-five percent", "Over ninety-nine percent", "About eighty-five percent"],
                 correct: 2,
                 type: "fact",
-                proof: "glass fiber optic cables now carry over ninety-nine percent of all international data traffic, forming the invisible backbone of the internet."
+                proof: "Perhaps most remarkably, glass fiber optic cables now carry over ninety-nine percent of all international data traffic, forming the invisible backbone of the internet."
             }
         ]
     },
