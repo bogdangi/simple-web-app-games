@@ -36,7 +36,7 @@ function saveProgress(progress) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
 }
 
-function computeLevel(recentWpms) {
+function computeAvgWpm(recentWpms) {
     if (!recentWpms || recentWpms.length === 0) return null;
     const slice = recentWpms.slice(-RECENT_ROUNDS_COUNT);
     return Math.round(slice.reduce((a, b) => a + b, 0) / slice.length);
@@ -113,11 +113,12 @@ function updateUI() {
 
 function updateHeader() {
     wpmDisplay.textContent = `${t('speed')}: ${progress.wpm} ${t('wpm')}`;
-    levelDisplay.textContent = `${t('level')}: ${progress.level}`;
     document.getElementById('points-display').textContent = `${t('points')}: ${progress.points}`;
-    const avgWpm = computeLevel(progress.recentWpms);
+    const avgWpm = computeAvgWpm(progress.recentWpms);
     if (avgWpm !== null) {
-        document.getElementById('points-display').textContent += ` | ${t('avg')}: ${avgWpm} ${t('wpm')}`;
+        levelDisplay.textContent = `${t('avg')}: ${avgWpm} ${t('wpm')}`;
+    } else {
+        levelDisplay.textContent = `${t('level')}: —`;
     }
 }
 
@@ -537,7 +538,7 @@ function showSummary() {
 
     document.getElementById('summary-score').textContent = scoreLabel;
 
-    const newWpm = Math.max(MIN_WPM, progress.wpm + wpmDelta);
+    const newWpm = Math.min(MAX_WPM, Math.max(MIN_WPM, progress.wpm + wpmDelta));
     const actualDelta = newWpm - progress.wpm;
 
     const wpmChangeEl = document.getElementById('summary-wpm-change');
@@ -652,7 +653,7 @@ document.getElementById('btn-calibrate').addEventListener('click', startDiagnost
 
 const speedSlider = document.getElementById('speed-slider');
 speedSlider.addEventListener('input', () => {
-    progress.wpm = parseInt(speedSlider.value, 10);
+    progress.wpm = Math.min(MAX_WPM, Math.max(MIN_WPM, parseInt(speedSlider.value, 10)));
     document.getElementById('slider-value').textContent = `${progress.wpm} ${t('wpm')}`;
     saveProgress(progress);
     updateHeader();
