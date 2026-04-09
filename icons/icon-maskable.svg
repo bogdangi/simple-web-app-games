@@ -1,4 +1,155 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="pg" cx="50%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#ff6b8a"/>
+      <stop offset="100%" stop-color="#c0325a"/>
+    </radialGradient>
+    <radialGradient id="bg" cx="50%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#6bc5ff"/>
+      <stop offset="100%" stop-color="#2a7abf"/>
+    </radialGradient>
+    <radialGradient id="yg" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#ffe066"/>
+      <stop offset="100%" stop-color="#f0a030"/>
+    </radialGradient>
+    <radialGradient id="rg" cx="35%" cy="30%" r="55%">
+      <stop offset="0%" stop-color="#ff4060"/>
+      <stop offset="100%" stop-color="#b01030"/>
+    </radialGradient>
+    <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4ecca3"/>
+      <stop offset="100%" stop-color="#1a7a55"/>
+    </linearGradient>
+    <linearGradient id="lg2" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5de0b0"/>
+      <stop offset="100%" stop-color="#1a7a55"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Maskable: full bleed, no rounded corners -->
   <rect width="512" height="512" fill="#1a1a2e"/>
-  <text x="256" y="310" text-anchor="middle" font-family="system-ui, Arial, sans-serif" font-size="240" font-weight="bold" fill="#4ecca3">G</text>
+
+  <!-- Everything scaled 0.8 and centered for safe zone -->
+  <g transform="translate(256,256) scale(0.78) translate(-256,-256)">
+
+    <!-- ═══ CENTRAL FLOWER ═══ -->
+    <g transform="translate(256,215)">
+      <g opacity="0.85">
+        <ellipse cx="0" cy="-52" rx="16" ry="40" fill="url(#pg)" transform="rotate(0)"/>
+        <ellipse cx="0" cy="-52" rx="16" ry="40" fill="url(#pg)" transform="rotate(30)"/>
+        <ellipse cx="0" cy="-52" rx="16" ry="40" fill="url(#pg)" transform="rotate(60)"/>
+        <ellipse cx="0" cy="-52" rx="16" ry="40" fill="url(#pg)" transform="rotate(90)"/>
+        <ellipse cx="0" cy="-52" rx="16" ry="40" fill="url(#pg)" transform="rotate(120)"/>
+        <ellipse cx="0" cy="-52" rx="16" ry="40" fill="url(#pg)" transform="rotate(150)"/>
+        <ellipse cx="0" cy="-52" rx="16" ry="40" fill="url(#pg)" transform="rotate(180)"/>
+        <ellipse cx="0" cy="-52" rx="16" ry="40" fill="url(#pg)" transform="rotate(210)"/>
+        <ellipse cx="0" cy="-52" rx="16" ry="40" fill="url(#pg)" transform="rotate(240)"/>
+        <ellipse cx="0" cy="-52" rx="16" ry="40" fill="url(#pg)" transform="rotate(270)"/>
+        <ellipse cx="0" cy="-52" rx="16" ry="40" fill="url(#pg)" transform="rotate(300)"/>
+        <ellipse cx="0" cy="-52" rx="16" ry="40" fill="url(#pg)" transform="rotate(330)"/>
+      </g>
+      <g opacity="0.95">
+        <ellipse cx="0" cy="-32" rx="11" ry="26" fill="#ff8faa" transform="rotate(15)"/>
+        <ellipse cx="0" cy="-32" rx="11" ry="26" fill="#ff8faa" transform="rotate(45)"/>
+        <ellipse cx="0" cy="-32" rx="11" ry="26" fill="#ff8faa" transform="rotate(75)"/>
+        <ellipse cx="0" cy="-32" rx="11" ry="26" fill="#ff8faa" transform="rotate(105)"/>
+        <ellipse cx="0" cy="-32" rx="11" ry="26" fill="#ff8faa" transform="rotate(135)"/>
+        <ellipse cx="0" cy="-32" rx="11" ry="26" fill="#ff8faa" transform="rotate(165)"/>
+        <ellipse cx="0" cy="-32" rx="11" ry="26" fill="#ff8faa" transform="rotate(195)"/>
+        <ellipse cx="0" cy="-32" rx="11" ry="26" fill="#ff8faa" transform="rotate(225)"/>
+        <ellipse cx="0" cy="-32" rx="11" ry="26" fill="#ff8faa" transform="rotate(255)"/>
+        <ellipse cx="0" cy="-32" rx="11" ry="26" fill="#ff8faa" transform="rotate(285)"/>
+        <ellipse cx="0" cy="-32" rx="11" ry="26" fill="#ff8faa" transform="rotate(315)"/>
+        <ellipse cx="0" cy="-32" rx="11" ry="26" fill="#ff8faa" transform="rotate(345)"/>
+      </g>
+      <circle cx="0" cy="0" r="16" fill="url(#yg)"/>
+      <circle cx="0" cy="0" r="5" fill="#c07820" opacity="0.6"/>
+    </g>
+
+    <!-- Left blue flower -->
+    <g transform="translate(115,170)">
+      <ellipse cx="0" cy="-22" rx="8" ry="18" fill="url(#bg)" transform="rotate(0)"/>
+      <ellipse cx="0" cy="-22" rx="8" ry="18" fill="url(#bg)" transform="rotate(60)"/>
+      <ellipse cx="0" cy="-22" rx="8" ry="18" fill="url(#bg)" transform="rotate(120)"/>
+      <ellipse cx="0" cy="-22" rx="8" ry="18" fill="url(#bg)" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-22" rx="8" ry="18" fill="url(#bg)" transform="rotate(240)"/>
+      <ellipse cx="0" cy="-22" rx="8" ry="18" fill="url(#bg)" transform="rotate(300)"/>
+      <circle cx="0" cy="0" r="8" fill="url(#yg)"/>
+    </g>
+
+    <!-- Right blue flower -->
+    <g transform="translate(400,175)">
+      <ellipse cx="0" cy="-20" rx="7" ry="16" fill="url(#bg)" transform="rotate(0)"/>
+      <ellipse cx="0" cy="-20" rx="7" ry="16" fill="url(#bg)" transform="rotate(72)"/>
+      <ellipse cx="0" cy="-20" rx="7" ry="16" fill="url(#bg)" transform="rotate(144)"/>
+      <ellipse cx="0" cy="-20" rx="7" ry="16" fill="url(#bg)" transform="rotate(216)"/>
+      <ellipse cx="0" cy="-20" rx="7" ry="16" fill="url(#bg)" transform="rotate(288)"/>
+      <circle cx="0" cy="0" r="7" fill="url(#yg)"/>
+    </g>
+
+    <!-- Stems -->
+    <path d="M256,290 C220,300 160,260 115,170" fill="none" stroke="#2a9070" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M256,290 C300,295 360,260 400,175" fill="none" stroke="#2a9070" stroke-width="3.5" stroke-linecap="round"/>
+
+    <!-- Leaves -->
+    <path d="M190,275 C170,255 150,260 145,240 C155,250 170,245 190,275Z" fill="url(#lg)"/>
+    <path d="M155,240 C135,230 125,240 120,225 C130,228 140,220 155,240Z" fill="url(#lg)" opacity="0.8"/>
+    <path d="M190,275 C172,258 152,255 145,240" fill="none" stroke="#1a5a40" stroke-width="1" opacity="0.5"/>
+    <path d="M330,268 C350,248 370,252 375,232 C365,242 348,238 330,268Z" fill="url(#lg2)"/>
+    <path d="M365,240 C380,225 390,230 395,215 C385,222 375,216 365,240Z" fill="url(#lg2)" opacity="0.8"/>
+    <path d="M330,268 C348,252 368,248 375,232" fill="none" stroke="#1a5a40" stroke-width="1" opacity="0.5"/>
+
+    <!-- Left berries -->
+    <g transform="translate(82,290)">
+      <path d="M0,0 L-12,-18" stroke="#2a9070" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M0,0 L2,-20" stroke="#2a9070" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M0,0 L14,-16" stroke="#2a9070" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M0,0 L-8,-8" stroke="#2a9070" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M0,0 L10,-6" stroke="#2a9070" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="-12" cy="-18" r="6" fill="url(#rg)"/>
+      <circle cx="2" cy="-20" r="6" fill="url(#rg)"/>
+      <circle cx="14" cy="-16" r="6" fill="url(#rg)"/>
+      <circle cx="-8" cy="-8" r="5.5" fill="url(#rg)"/>
+      <circle cx="10" cy="-6" r="5.5" fill="url(#rg)"/>
+      <circle cx="-14" cy="-20" r="1.5" fill="#fff" opacity="0.4"/>
+      <circle cx="0" cy="-22" r="1.5" fill="#fff" opacity="0.4"/>
+      <circle cx="12" cy="-18" r="1.5" fill="#fff" opacity="0.4"/>
+      <path d="M-5,4 C-18,0 -20,8 -15,14 C-12,8 -5,4 -5,4Z" fill="url(#lg)" opacity="0.7"/>
+    </g>
+    <path d="M256,290 C200,310 120,310 82,290" fill="none" stroke="#2a9070" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Right berries -->
+    <g transform="translate(430,285)">
+      <path d="M0,0 L-10,-16" stroke="#2a9070" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M0,0 L4,-18" stroke="#2a9070" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M0,0 L12,-12" stroke="#2a9070" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M0,0 L-4,-6" stroke="#2a9070" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="-10" cy="-16" r="5.5" fill="url(#rg)"/>
+      <circle cx="4" cy="-18" r="5.5" fill="url(#rg)"/>
+      <circle cx="12" cy="-12" r="5.5" fill="url(#rg)"/>
+      <circle cx="-4" cy="-6" r="5" fill="url(#rg)"/>
+      <circle cx="-12" cy="-18" r="1.5" fill="#fff" opacity="0.4"/>
+      <circle cx="2" cy="-20" r="1.5" fill="#fff" opacity="0.4"/>
+      <path d="M5,4 C18,0 20,8 15,14 C12,8 5,4 5,4Z" fill="url(#lg2)" opacity="0.7"/>
+    </g>
+    <path d="M256,290 C310,310 390,305 430,285" fill="none" stroke="#2a9070" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Curls -->
+    <path d="M100,310 C85,330 75,320 70,340 C68,348 75,352 80,345" fill="none" stroke="#4ecca3" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+    <path d="M415,305 C430,325 440,315 445,335 C447,343 440,347 435,340" fill="none" stroke="#4ecca3" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+
+    <!-- Dots -->
+    <circle cx="135" cy="300" r="3" fill="#4ecca3" opacity="0.4"/>
+    <circle cx="125" cy="310" r="2" fill="#4ecca3" opacity="0.3"/>
+    <circle cx="380" cy="298" r="3" fill="#4ecca3" opacity="0.4"/>
+    <circle cx="390" cy="308" r="2" fill="#4ecca3" opacity="0.3"/>
+
+    <!-- Text -->
+    <text x="256" y="420" text-anchor="middle"
+          font-family="system-ui, -apple-system, sans-serif"
+          font-size="48" font-weight="700" letter-spacing="8"
+          fill="#4ecca3">GAMES</text>
+
+    <path d="M180,440 C200,450 220,445 256,448 C292,445 312,450 332,440" fill="none" stroke="#4ecca3" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+  </g>
 </svg>
