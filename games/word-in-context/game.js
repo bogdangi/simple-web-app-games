@@ -69,7 +69,7 @@ const summaryBreakdown = document.getElementById('summary-breakdown');
 const langSelect = document.getElementById('lang-select');
 const qtyMinus = document.getElementById('qty-minus');
 const qtyPlus = document.getElementById('qty-plus');
-const qtyValue = document.getElementById('qty-value');
+const qtyValue = document.getElementById('questions-count');
 
 // ─── Screen management ────────────────────────────────────────────────────────
 function showScreen(name) {
@@ -87,6 +87,7 @@ function updateUIText() {
     document.title = t('title');
     updateStatsDisplay();
     qtyValue.textContent = questionsPerRound;
+    qtyValue.setAttribute('aria-valuenow', questionsPerRound);
 }
 
 function updateStatsDisplay() {
@@ -104,6 +105,7 @@ function clampQuestionsToPool() {
     if (questionsPerRound > poolSize) {
         questionsPerRound = poolSize;
         qtyValue.textContent = questionsPerRound;
+        qtyValue.setAttribute('aria-valuenow', questionsPerRound);
     }
 }
 
@@ -267,12 +269,14 @@ qtyMinus.addEventListener('click', () => {
     if (questionsPerRound > MIN_QUESTIONS) {
         questionsPerRound--;
         qtyValue.textContent = questionsPerRound;
+        qtyValue.setAttribute('aria-valuenow', questionsPerRound);
     }
 });
 qtyPlus.addEventListener('click', () => {
     if (questionsPerRound < MAX_QUESTIONS) {
         questionsPerRound++;
         qtyValue.textContent = questionsPerRound;
+        qtyValue.setAttribute('aria-valuenow', questionsPerRound);
     }
 });
 
