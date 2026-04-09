@@ -35,7 +35,7 @@ TEXTS.de = [
                 options: ["Ein Mönch während des Abendgebets", "Ein Händler auf Reisen durch Äthiopien", "Ein Ziegenhirte namens Kaldi", "Ein arabischer Gewürzhändler"],
                 correct: 2,
                 type: "fact",
-                proof: "der Legende nach ein Ziegenhirte namens Kaldi bemerkte, dass seine Ziegen nach dem Verzehr von Beeren eines bestimmten Baumes besonders munter wurden."
+                proof: "Das Getränk, das wir heute kennen, hat seinen Ursprung in Äthiopien, wo der Legende nach ein Ziegenhirte namens Kaldi bemerkte, dass seine Ziegen nach dem Verzehr von Beeren eines bestimmten Baumes besonders munter wurden."
             },
             {
                 text: "Der Weg von der Kaffeekirsche bis in die Tasse ist überraschend lang. Nach der Ernte müssen die Bohnen aus der Frucht gelöst, dann getrocknet, sortiert und geröstet werden. Beim Rösten geschieht die eigentliche Magie. Grüne Kaffeebohnen haben fast keinen Geschmack. Der Röstvorgang löst chemische Reaktionen aus, die über achthundert verschiedene Verbindungen erzeugen, die für den komplexen Geschmack und das Aroma des Kaffees verantwortlich sind. Helle Röstungen enthalten tatsächlich mehr Koffein als dunkle, denn der längere Röstprozess baut mehr Koffeinmoleküle ab.",
@@ -219,7 +219,7 @@ TEXTS.de = [
                 options: ["Etwa fünfzig Prozent", "Etwa fünfundsiebzig Prozent", "Über neunundneunzig Prozent", "Etwa fünfundachtzig Prozent"],
                 correct: 2,
                 type: "fact",
-                proof: "Glasfaserkabel heute über neunundneunzig Prozent des gesamten internationalen Datenverkehrs übertragen und damit das unsichtbare Rückgrat des Internets bilden."
+                proof: "Am bemerkenswertesten ist vielleicht, dass Glasfaserkabel heute über neunundneunzig Prozent des gesamten internationalen Datenverkehrs übertragen und damit das unsichtbare Rückgrat des Internets bilden."
             }
         ]
     },
