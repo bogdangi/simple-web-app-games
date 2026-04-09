@@ -166,9 +166,12 @@ function getPunctuationPause(chunkWords) {
 // Average letter length of words in a text (punctuation stripped), used to
 // estimate reading difficulty. Higher values indicate more complex vocabulary.
 function getTextComplexity(text) {
-    const words = text.split(/\s+/).filter(Boolean);
+    const words = text
+        .split(/\s+/)
+        .map(w => w.replace(/[^\p{L}]/gu, ''))
+        .filter(Boolean);
     if (words.length === 0) return 0;
-    const totalChars = words.reduce((sum, w) => sum + w.replace(/[^\p{L}]/gu, '').length, 0);
+    const totalChars = words.reduce((sum, w) => sum + w.length, 0);
     return totalChars / words.length;
 }
 
