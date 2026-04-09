@@ -84,6 +84,7 @@ function updateUIText() {
         const text = t(key);
         if (text) el.textContent = text;
     });
+    document.title = t('title');
     updateStatsDisplay();
     qtyValue.textContent = questionsPerRound;
 }
