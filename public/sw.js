@@ -51,7 +51,10 @@ self.addEventListener('fetch', (event) => {
                     caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
                 }
                 return response;
-            }).catch(() => cached);
+            }).catch(() => cached || new Response('You are offline. Please reconnect and try again.', {
+                status: 503,
+                headers: { 'Content-Type': 'text/html' }
+            }));
             return cached || fetched;
         })
     );

@@ -396,7 +396,7 @@ function replayPart() {
 
 function adjustWpm(delta) {
     if (!screens.reading.classList.contains('active')) return;
-    partWpm = Math.max(MIN_WPM, partWpm + delta);
+    partWpm = Math.min(MAX_WPM, Math.max(MIN_WPM, partWpm + delta));
 
     // Recompute effective WPM with cached complexity cap (O(1) — no text re-scan)
     const { wpm: cappedWpm, capped } = getEffectiveWpm(partComplexity, partWpm);

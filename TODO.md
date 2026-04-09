@@ -15,10 +15,7 @@ _All P2 bugs fixed — moved to Done_
 _All P3 bugs fixed — moved to Done_
 
 ### P4 — Low priority / polish
-- [ ] QA-005: WIC uses biased `Math.random() - 0.5` shuffle — not uniform distribution
-- [ ] QA-011: Speed-reader in-round WPM has no upper bound via arrow keys (only floor at MIN_WPM)
-- [ ] UI-016: `.hidden` class uses `!important` in WIC but not in other pages — inconsistent
-- [ ] UI-021: SW returns `undefined` when offline + no cache match — no offline fallback page
+_All P4 bugs fixed — moved to Done_
 
 ## In Progress (Assigned by Coordinator)
 <!-- Coordinator moves tasks here and assigns to Dev -->
@@ -40,6 +37,10 @@ _All P3 bugs fixed — moved to Done_
 - [x] UI-010: Added `.filter-btn:focus-visible` style in vocabulary page
 - [x] UI-012: Home h1 uses `clamp(1.8rem, 5vw, 2.5rem)` — scales on narrow viewports
 - [x] UI-014: Vocab grid uses `minmax(min(280px, 100%), 1fr)` — no overflow at 320px
+- [x] QA-005: Replaced biased sort shuffle with Fisher-Yates in WIC game.js
+- [x] QA-011: Added MAX_WPM cap to speed-reader adjustWpm function
+- [x] UI-016: Removed `!important` from WIC `.hidden` class for consistency
+- [x] UI-021: Added offline fallback Response in SW when both fetch and cache miss
 
 ---
 

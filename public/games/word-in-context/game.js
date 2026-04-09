@@ -1,3 +1,11 @@
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 const STORAGE_KEY = 'word-in-context-progress';
 const MIN_QUESTIONS = 5;
 const MAX_QUESTIONS = 15;
@@ -141,14 +149,14 @@ function pickRoundPuzzles() {
     }
 
     // Shuffle and pick
-    const shuffled = available.slice().sort(() => Math.random() - 0.5);
+    const shuffled = shuffle(available.slice());
     const picked = shuffled.slice(0, Math.min(questionsPerRound, pool.length));
     progress.usedIndices[lang] = (progress.usedIndices[lang] || []).concat(picked);
     saveProgress();
 
     return picked.map(i => ({
         ...pool[i],
-        options: pool[i].options.slice().sort(() => Math.random() - 0.5),
+        options: shuffle(pool[i].options.slice()),
     }));
 }
 
