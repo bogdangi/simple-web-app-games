@@ -9,15 +9,10 @@ _All P0 bugs fixed — moved to Done_
 _All P1 bugs fixed — moved to Done_
 
 ### P2 — Accessibility
-- [ ] UI-005: WIC CSS `#qty-value` targets wrong ID — should be `#questions-count`, styling never applied
-- [ ] UI-006: WIC `sentence-area` has empty `aria-label=""` — invisible to screen readers
-- [ ] UI-008: Speed-reader control buttons (-10, restart, pause, +10) lack `aria-label` attributes
-- [ ] UI-009: Speed-reader `.btn-secondary` has no `:focus-visible` style — no keyboard focus indicator
-- [ ] UI-010: Vocabulary `.filter-btn` has no `:focus-visible` style — no keyboard focus indicator
+_All P2 bugs fixed — moved to Done_
 
 ### P3 — Responsive design
-- [ ] UI-012: Home page h1 at `2.5rem` can overflow on narrow viewports with long translated titles (Ukrainian)
-- [ ] UI-014: Vocabulary `.words-grid` uses `minmax(280px, 1fr)` — wider than 320px container, causes horizontal scroll
+_All P3 bugs fixed — moved to Done_
 
 ### P4 — Low priority / polish
 - [ ] QA-005: WIC uses biased `Math.random() - 0.5` shuffle — not uniform distribution
@@ -38,6 +33,13 @@ _All P1 bugs fixed — moved to Done_
 - [x] UI-001: Added `gamesListLabel` key to all 3 languages in `APP_UI` (app.js)
 - [x] UI-002: Added `readingTextLabel` key to all 3 languages in speed-reader i18n.js
 - [x] UI-003: Added `decreaseQuantity`/`increaseQuantity` keys to all 3 languages in WIC i18n.js
+- [x] UI-005: Fixed CSS selector `#qty-value` → `#questions-count` in WIC style.css
+- [x] UI-006: Removed empty `aria-label=""` from WIC sentence-area div
+- [x] UI-008: Added `aria-label` to speed-reader control buttons (-10, restart, +10)
+- [x] UI-009: Added `.btn-secondary:focus-visible` style in speed-reader
+- [x] UI-010: Added `.filter-btn:focus-visible` style in vocabulary page
+- [x] UI-012: Home h1 uses `clamp(1.8rem, 5vw, 2.5rem)` — scales on narrow viewports
+- [x] UI-014: Vocab grid uses `minmax(min(280px, 100%), 1fr)` — no overflow at 320px
 
 ---
 

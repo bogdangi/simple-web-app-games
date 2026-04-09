@@ -251,6 +251,11 @@ main {
     color: #1a1a2e;
 }
 
+.btn-secondary:focus-visible {
+    outline: 2px solid #4ecca3;
+    outline-offset: 3px;
+}
+
 /* Reading screen */
 .diagnostic-banner {
     text-align: center;

@@ -133,6 +133,11 @@ main {
     color: #eee;
 }
 
+.filter-btn:focus-visible {
+    outline: 2px solid #4ecca3;
+    outline-offset: 2px;
+}
+
 .filter-btn.active {
     background: #1a3a2e;
     border-color: #4ecca3;
@@ -161,7 +166,7 @@ main {
 /* Word cards */
 .words-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
     gap: 0.6rem;
 }
 
