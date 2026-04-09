@@ -406,6 +406,24 @@ function showQuestion() {
     const part = texts[currentTextIndex].parts[currentPart];
     document.getElementById('question-text').textContent = part.question;
 
+    // Question type badge
+    const badge = document.getElementById('question-type-badge');
+    const typeKeyMap = {
+        fact: 'qTypeFact',
+        main_idea: 'qTypeMainIdea',
+        inference: 'qTypeInference',
+        sequence: 'qTypeSequence',
+        vocabulary: 'qTypeVocabulary',
+    };
+    const typeKey = part.type ? typeKeyMap[part.type] : null;
+    if (typeKey) {
+        badge.textContent = t(typeKey);
+        badge.className = 'question-type-badge type-' + part.type;
+    } else {
+        badge.textContent = '';
+        badge.className = 'hidden';
+    }
+
     const container = document.getElementById('options-container');
     container.innerHTML = '';
 
@@ -437,15 +455,38 @@ function handleAnswer(selected) {
     setTimeout(() => showFeedback(isCorrect, part), 600);
 }
 
+function proceedFromFeedback() {
+    document.getElementById('confidence-section').classList.add('hidden');
+    document.getElementById('btn-next').classList.remove('hidden');
+    if (isDiagnostic) {
+        if (diagnosticStep < DIAGNOSTIC_SPEEDS.length) {
+            runDiagnosticStep();
+        } else {
+            finishDiagnostic();
+        }
+        return;
+    }
+    currentPart++;
+    if (currentPart < 3) {
+        startPart();
+    } else {
+        showSummary();
+    }
+}
+
 function showFeedback(isCorrect, part) {
     const icon = document.getElementById('feedback-icon');
     const title = document.getElementById('feedback-title');
     const detail = document.getElementById('feedback-detail');
     const proofSection = document.getElementById('proof-section');
     const proofText = document.getElementById('proof-text');
+    const confidenceSection = document.getElementById('confidence-section');
+    const btnNext = document.getElementById('btn-next');
 
     if (isDiagnostic) {
         proofSection.classList.add('hidden');
+        confidenceSection.classList.add('hidden');
+        btnNext.classList.remove('hidden');
         if (isCorrect) {
             // Record the speed the user just passed, then advance to the next step.
             diagnosticPassed = DIAGNOSTIC_SPEEDS[diagnosticStep];
@@ -486,28 +527,18 @@ function showFeedback(isCorrect, part) {
         const correctAnswer = part.options[part.correct];
         detail.textContent = t('theAnswerWas').replace('{answer}', correctAnswer);
         proofSection.classList.remove('hidden');
-        proofText.textContent = part.text;
+        // Use the specific evidence sentence if provided, otherwise fall back to full text
+        proofText.textContent = part.proof || part.text;
     }
+
+    // Show confidence rating; hide the plain Continue button until confidence is chosen
+    confidenceSection.classList.remove('hidden');
+    btnNext.classList.add('hidden');
 
     showScreen('feedback');
 }
 
-document.getElementById('btn-next').addEventListener('click', () => {
-    if (isDiagnostic) {
-        if (diagnosticStep < DIAGNOSTIC_SPEEDS.length) {
-            runDiagnosticStep();
-        } else {
-            finishDiagnostic();
-        }
-        return;
-    }
-    currentPart++;
-    if (currentPart < 3) {
-        startPart();
-    } else {
-        showSummary();
-    }
-});
+document.getElementById('btn-next').addEventListener('click', proceedFromFeedback);
 
 function showSummary() {
     const correctCount = partResults.filter(r => r).length;
@@ -650,6 +681,10 @@ phraseModeToggle.addEventListener('change', () => {
 document.getElementById('btn-next-round').addEventListener('click', startRound);
 document.getElementById('btn-start').addEventListener('click', startRound);
 document.getElementById('btn-calibrate').addEventListener('click', startDiagnostic);
+
+document.querySelectorAll('.confidence-btn').forEach(btn => {
+    btn.addEventListener('click', proceedFromFeedback);
+});
 
 const speedSlider = document.getElementById('speed-slider');
 speedSlider.addEventListener('input', () => {
