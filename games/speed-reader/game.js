@@ -51,6 +51,9 @@ let isPaused = false;
 let readingWords = [];
 let readingWordIndex = 0;
 let readingChunkSize = 1;
+let readingChunks = null;  // precomputed phrase-mode chunks (array of word arrays) or null
+let readingChunkIndex = 0; // current position in readingChunks
+let effectivePartWpm = 100; // WPM after complexity cap; set in startPart, used everywhere
 let lastChunkWords = []; // the chunk currently on screen, used to reschedule timer on WPM change
 
 // DOM
@@ -77,6 +80,7 @@ function updateUI() {
         const text = t(key);
         if (text) el.textContent = text;
     });
+    document.title = t('title');
     updatePauseButton();
     updateHeader();
 }
@@ -215,37 +219,40 @@ function clearQuestionTimer() {
 
 function showNextChunk() {
     if (isPaused) return;
-    if (readingWordIndex >= readingWords.length) {
+
+    // Determine whether reading is complete (phrase mode uses chunk index; standard uses word index)
+    const done = readingChunks !== null
+        ? readingChunkIndex >= readingChunks.length
+        : readingWordIndex >= readingWords.length;
+
+    if (done) {
         wordTimer = null;
         clearQuestionTimer();
         questionTimer = setTimeout(() => {
             questionTimer = null;
-            if (!isPaused && readingWordIndex >= readingWords.length) {
-                showQuestion();
-            }
+            if (!isPaused) showQuestion();
         }, 500);
         return;
     }
+
     const readingText = document.getElementById('reading-text');
     const progressBar = document.getElementById('progress-bar');
-    const effectivePartWpm = getEffectiveWpm();
     const msPerWord = 60000 / effectivePartWpm;
 
     let chunkWords;
-    if (readingChunkSize === null) {
-        // Phrase mode: find next phrase boundary
-        const remaining = readingWords.slice(readingWordIndex);
-        const phraseChunks = buildPhraseChunks(remaining.join(' '));
-        chunkWords = phraseChunks.length > 0 ? phraseChunks[0] : remaining;
+    if (readingChunks !== null) {
+        // Phrase mode: advance precomputed chunk array (O(1) per tick)
+        chunkWords = readingChunks[readingChunkIndex++];
+        readingWordIndex += chunkWords.length;
     } else {
         const end = Math.min(readingWordIndex + readingChunkSize, readingWords.length);
         chunkWords = readingWords.slice(readingWordIndex, end);
+        readingWordIndex += chunkWords.length;
     }
     readingText.classList.remove('word-appear');
     void readingText.offsetWidth; // force reflow to restart animation
     readingText.textContent = chunkWords.join(' ');
     readingText.classList.add('word-appear');
-    readingWordIndex += chunkWords.length;
     lastChunkWords = chunkWords;
     progressBar.style.width = ((readingWordIndex / readingWords.length) * 100) + '%';
     const displayTime = Math.round(getChunkDisplayTime(chunkWords, msPerWord) * getPunctuationPause(chunkWords));
@@ -269,15 +276,23 @@ function startPart() {
 
     const texts = getTexts();
     const part = texts[currentTextIndex].parts[currentPart];
-    const { wpm: effectiveWpm, capped } = getEffectiveWpm(part.text, partWpm);
-    document.getElementById('current-speed').textContent = effectiveWpm;
+    const { wpm: cappedWpm, capped } = getEffectiveWpm(part.text, partWpm);
+    effectivePartWpm = cappedWpm;
+    document.getElementById('current-speed').textContent = effectivePartWpm;
     document.getElementById('speed-capped-note').classList.toggle('hidden', !capped);
 
     readingWords = part.text.split(/\s+/).filter(Boolean);
     readingWordIndex = 0;
-    readingChunkSize = progress.phraseMode
-        ? null
-        : Math.max(1, Math.min(MAX_CHUNK_SIZE, Math.floor(effectiveWpm / CHUNK_SIZE_WPM_STEP) + 1));
+
+    if (progress.phraseMode) {
+        // Precompute all phrase chunks once so showNextChunk() is O(1) per tick
+        readingChunks = buildPhraseChunks(part.text);
+        readingChunkIndex = 0;
+        readingChunkSize = null;
+    } else {
+        readingChunks = null;
+        readingChunkSize = Math.max(1, Math.min(MAX_CHUNK_SIZE, Math.floor(effectivePartWpm / CHUNK_SIZE_WPM_STEP) + 1));
+    }
     isPaused = false;
 
     document.getElementById('reading-text').textContent = '';
@@ -308,6 +323,7 @@ function replayPart() {
         wordTimer = null;
     }
     readingWordIndex = 0;
+    readingChunkIndex = 0;
     isPaused = false;
     document.getElementById('reading-text').textContent = '';
     document.getElementById('progress-bar').style.width = '0%';
@@ -318,14 +334,25 @@ function replayPart() {
 function adjustWpm(delta) {
     if (!screens.reading.classList.contains('active')) return;
     partWpm = Math.max(MIN_WPM, partWpm + delta);
-    document.getElementById('current-speed').textContent = partWpm;
-    readingChunkSize = Math.max(1, Math.min(3, Math.floor(partWpm / 150) + 1));
-    // Reschedule the pending chunk timer using the new WPM so the display
-    // duration of the current on-screen chunk reflects the updated speed.
+
+    // Recompute effective WPM with complexity cap
+    const texts = getTexts();
+    const part = texts[currentTextIndex].parts[currentPart];
+    const { wpm: cappedWpm, capped } = getEffectiveWpm(part.text, partWpm);
+    effectivePartWpm = cappedWpm;
+    document.getElementById('current-speed').textContent = effectivePartWpm;
+    document.getElementById('speed-capped-note').classList.toggle('hidden', !capped);
+
+    // Update standard-mode chunk size for new speed
+    if (readingChunks === null) {
+        readingChunkSize = Math.max(1, Math.min(MAX_CHUNK_SIZE, Math.floor(effectivePartWpm / CHUNK_SIZE_WPM_STEP) + 1));
+    }
+
+    // Reschedule the pending chunk timer using the new effective WPM and pause multiplier
     if (!isPaused && wordTimer !== null) {
         clearTimeout(wordTimer);
-        const msPerWord = 60000 / partWpm;
-        wordTimer = setTimeout(showNextChunk, getChunkDisplayTime(lastChunkWords, msPerWord));
+        const msPerWord = 60000 / effectivePartWpm;
+        wordTimer = setTimeout(showNextChunk, Math.round(getChunkDisplayTime(lastChunkWords, msPerWord) * getPunctuationPause(lastChunkWords)));
     }
 }
 
