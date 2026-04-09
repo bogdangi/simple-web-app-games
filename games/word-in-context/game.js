@@ -99,6 +99,14 @@ function getPuzzles() {
     return PUZZLES[lang] || PUZZLES.en || [];
 }
 
+function clampQuestionsToPool() {
+    const poolSize = getPuzzles().length;
+    if (questionsPerRound > poolSize) {
+        questionsPerRound = poolSize;
+        qtyValue.textContent = questionsPerRound;
+    }
+}
+
 function pickRoundPuzzles() {
     const pool = getPuzzles();
     const used = progress.usedIndices[lang] || [];
@@ -124,6 +132,7 @@ function pickRoundPuzzles() {
 
 // ─── Game flow ────────────────────────────────────────────────────────────────
 function startRound() {
+    clampQuestionsToPool();
     roundQuestions = pickRoundPuzzles();
     currentIndex = 0;
     roundScore = 0;
@@ -277,6 +286,7 @@ langSelect.addEventListener('change', () => {
     localStorage.setItem('app-language', lang);
     progress.lang = lang;
     saveProgress();
+    clampQuestionsToPool();
     showScreen('start');
     updateUIText();
 });
