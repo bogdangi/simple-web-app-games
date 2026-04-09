@@ -184,16 +184,6 @@ function getEffectiveWpm(text, wpm) {
 const MAX_CHUNK_SIZE = 3;
 const CHUNK_SIZE_WPM_STEP = 150; // one extra word per chunk for each step above 0
 
-// Split text into fixed-size chunks of chunkSize words each.
-function buildChunks(text, chunkSize) {
-    const words = text.split(/\s+/).filter(Boolean);
-    const chunks = [];
-    for (let i = 0; i < words.length; i += chunkSize) {
-        chunks.push(words.slice(i, i + chunkSize));
-    }
-    return chunks;
-}
-
 // Split text into phrase-boundary chunks. Each chunk ends at sentence-ending
 // punctuation (. ! ?) or clause punctuation (, ; :), and is capped at
 // MAX_PHRASE_WORDS words so individual chunks remain readable.
