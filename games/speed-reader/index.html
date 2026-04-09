@@ -89,6 +89,7 @@
 
         <!-- Question Screen -->
         <div id="screen-question" class="screen" aria-live="polite">
+            <div id="question-type-badge" class="hidden" aria-label="Question type"></div>
             <h2 id="question-text"></h2>
             <div id="options-container" role="group" aria-labelledby="question-text"></div>
         </div>
@@ -101,6 +102,14 @@
             <div id="proof-section" class="hidden">
                 <h3 data-ui="fromTheText">From the text:</h3>
                 <blockquote id="proof-text"></blockquote>
+            </div>
+            <div id="confidence-section" class="hidden">
+                <p class="confidence-label" data-ui="confidence"></p>
+                <div id="confidence-buttons">
+                    <button class="confidence-btn" data-level="1" data-ui="confidenceLow"></button>
+                    <button class="confidence-btn" data-level="2" data-ui="confidenceMed"></button>
+                    <button class="confidence-btn" data-level="3" data-ui="confidenceHigh"></button>
+                </div>
             </div>
             <button id="btn-next" class="btn-primary" data-ui="continue">Continue</button>
         </div>
