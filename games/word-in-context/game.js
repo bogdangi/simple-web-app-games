@@ -136,7 +136,7 @@ function showQuestion() {
 
     // Progress info
     questionCounter.textContent = `${t('question')} ${currentIndex + 1} ${t('of')} ${roundQuestions.length}`;
-    const pct = Math.round((currentIndex / roundQuestions.length) * 100);
+    const pct = Math.round(((currentIndex + 1) / roundQuestions.length) * 100);
     progressBar.style.width = `${pct}%`;
     progressBar.parentElement.setAttribute('aria-valuenow', pct);
 
