@@ -276,6 +276,7 @@ langSelect.addEventListener('change', () => {
     localStorage.setItem('app-language', lang);
     progress.lang = lang;
     saveProgress();
+    showScreen('start');
     updateUIText();
 });
 
