@@ -183,7 +183,7 @@ TEXTS.de = [
                 options: ["Durch die Verwendung falscher Farben für verschiedene Länder", "Durch die Beschriftung besiedelter Gebiete als unerforschtes Gebiet", "Durch das Einzeichnen von Flüssen an falschen Stellen", "Durch den Ausschluss aller Meeresgebiete von der Karte"],
                 correct: 1,
                 type: "fact",
-                proof: "europäische Kartographen weite Regionen Afrikas und Amerikas leer oder beschrifteten sie mit Ausdrücken wie unerforschtes Gebiet, wobei sie die Millionen von Menschen ignorierten, die dort bereits lebten."
+                proof: "Europäische Kartographen ließen weite Regionen Afrikas und Amerikas leer oder beschrifteten sie mit Ausdrücken wie unerforschtes Gebiet, wobei sie die Millionen von Menschen ignorierten, die dort bereits lebten."
             },
             {
                 text: "Digitale Karten haben die Art, wie wir navigieren, revolutioniert, aber auch neue Probleme geschaffen. GPS-Navigation hat unsere natürliche Fähigkeit, mentale Karten zu bilden, verringert. Studien zeigen, dass Menschen, die sich stark auf GPS verlassen, eine geringere Aktivität im Hippocampus aufweisen, der Hirnregion, die für das räumliche Gedächtnis zuständig ist. Londoner Taxifahrer, die für ihre Lizenz Tausende von Straßen auswendig lernen müssen, entwickeln durch jahrelanges Training tatsächlich einen messbar größeren Hippocampus. Indem wir die Navigation an unsere Telefone auslagern, riskieren wir, diese kognitive Übung zu verlieren. Einige Forscher befürchten, dass eine verminderte räumliche Orientierungsfähigkeit breitere Auswirkungen auf Gedächtnis und kognitive Gesundheit haben könnte, wenn die Bevölkerung altert.",
