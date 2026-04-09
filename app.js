@@ -23,11 +23,11 @@ const APP_UI = {
 
 const games = [
     {
-        name: { en: 'Speed Reader', de: 'Schnell-Leser', uk: '\u0428\u0432\u0438\u0434\u043a\u0435 \u0447\u0438\u0442\u0430\u043d\u043d\u044f' },
+        name: { en: 'Fluency Trainer', de: 'Lese-Trainer', uk: '\u0422\u0440\u0435\u043d\u0430\u0436\u0435\u0440 \u0447\u0438\u0442\u0430\u043d\u043d\u044f' },
         description: {
-            en: 'Train your reading speed with comprehension checks. Tracks your progress over time.',
-            de: 'Trainiere deine Lesegeschwindigkeit mit Verst\u00e4ndnisfragen. Dein Fortschritt wird gespeichert.',
-            uk: '\u0422\u0440\u0435\u043d\u0443\u0439 \u0448\u0432\u0438\u0434\u043a\u0456\u0441\u0442\u044c \u0447\u0438\u0442\u0430\u043d\u043d\u044f \u0437 \u043f\u0435\u0440\u0435\u0432\u0456\u0440\u043a\u043e\u044e \u0440\u043e\u0437\u0443\u043c\u0456\u043d\u043d\u044f. \u041f\u0440\u043e\u0433\u0440\u0435\u0441 \u0437\u0431\u0435\u0440\u0456\u0433\u0430\u0454\u0442\u044c\u0441\u044f.',
+            en: 'Train your reading fluency with comprehension checks. Tracks your progress over time.',
+            de: 'Trainiere deine Lesefähigkeit mit Verst\u00e4ndnisfragen. Dein Fortschritt wird gespeichert.',
+            uk: '\u0422\u0440\u0435\u043d\u0443\u0439 \u043f\u043b\u0430\u0432\u043d\u0456\u0441\u0442\u044c \u0447\u0438\u0442\u0430\u043d\u043d\u044f \u0437 \u043f\u0435\u0440\u0435\u0432\u0456\u0440\u043a\u043e\u044e \u0440\u043e\u0437\u0443\u043c\u0456\u043d\u043d\u044f. \u041f\u0440\u043e\u0433\u0440\u0435\u0441 \u0437\u0431\u0435\u0440\u0456\u0433\u0430\u0454\u0442\u044c\u0441\u044f.',
         },
         path: 'games/speed-reader/index.html'
     }
