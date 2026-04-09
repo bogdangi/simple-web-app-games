@@ -338,7 +338,7 @@ const PUZZLES = {
             correctExplanation: "'Erschrocken' beschreibt eine plötzliche Schreckreaktion auf ein unerwartetes Ereignis — genau das, was jemanden dazu bringt, Dinge fallen zu lassen."
         },
         {
-            sentence: "Das Dokumentarfilm war so ___, dass die Zuschauer viel zum Nachdenken hatten.",
+            sentence: "Der Dokumentarfilm war so ___, dass die Zuschauer viel zum Nachdenken hatten.",
             answer: "nachdenklich stimmend",
             options: ["nachdenklich stimmend", "unterhaltsam", "kurz", "farbenfroh"],
             explanations: {
