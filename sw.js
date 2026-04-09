@@ -1,4 +1,4 @@
-const CACHE_NAME = 'web-games-v1';
+const CACHE_NAME = 'web-games-v2';
 
 const ASSET_PATHS = [
     './',
@@ -13,6 +13,10 @@ const ASSET_PATHS = [
     'games/speed-reader/texts/en.js',
     'games/speed-reader/texts/de.js',
     'games/speed-reader/texts/uk.js',
+    'games/word-in-context/index.html',
+    'games/word-in-context/style.css',
+    'games/word-in-context/game.js',
+    'games/word-in-context/i18n.js',
 ];
 
 self.addEventListener('install', (event) => {
