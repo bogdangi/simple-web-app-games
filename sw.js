@@ -1,4 +1,4 @@
-const CACHE_NAME = 'web-games-v2';
+const CACHE_NAME = 'web-games-v3';
 
 const ASSET_PATHS = [
     './',
