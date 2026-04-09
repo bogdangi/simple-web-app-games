@@ -280,9 +280,13 @@ function startPart() {
     const texts = getTexts();
     const part = texts[currentTextIndex].parts[currentPart];
     const { wpm: cappedWpm, capped } = getEffectiveWpm(part.text, partWpm);
+    const speedCappedNote = document.getElementById('speed-capped-note');
     effectivePartWpm = cappedWpm;
     document.getElementById('current-speed').textContent = effectivePartWpm;
-    document.getElementById('speed-capped-note').classList.toggle('hidden', !capped);
+    speedCappedNote.classList.toggle('hidden', !capped);
+    speedCappedNote.textContent = capped
+        ? `Effective speed: ${effectivePartWpm} WPM (target: ${partWpm} WPM)`
+        : '';
 
     readingWords = part.text.split(/\s+/).filter(Boolean);
     readingWordIndex = 0;
