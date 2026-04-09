@@ -54,6 +54,7 @@ let readingChunkSize = 1;
 let readingChunks = null;  // precomputed phrase-mode chunks (array of word arrays) or null
 let readingChunkIndex = 0; // current position in readingChunks
 let effectivePartWpm = 100; // WPM after complexity cap; set in startPart, used everywhere
+let partComplexity = 0;   // avg word length for current part; computed once in startPart
 let lastChunkWords = []; // the chunk currently on screen, used to reschedule timer on WPM change
 
 // DOM
@@ -178,8 +179,8 @@ function getTextComplexity(text) {
 // Soft speed cap: very long-word texts (e.g. German compound nouns, technical
 // vocabulary) are capped at a lower WPM so comprehension doesn't suffer.
 // Returns the effective WPM to use and whether the cap was applied.
-function getEffectiveWpm(text, wpm) {
-    const complexity = getTextComplexity(text);
+// Accepts a pre-computed complexity value (avg letter length per word).
+function getEffectiveWpm(complexity, wpm) {
     if (complexity >= 7.5) return { wpm: Math.min(wpm, 250), capped: wpm > 250 };
     if (complexity >= 6.5) return { wpm: Math.min(wpm, 350), capped: wpm > 350 };
     return { wpm, capped: false };
@@ -279,7 +280,8 @@ function startPart() {
 
     const texts = getTexts();
     const part = texts[currentTextIndex].parts[currentPart];
-    const { wpm: cappedWpm, capped } = getEffectiveWpm(part.text, partWpm);
+    partComplexity = getTextComplexity(part.text);
+    const { wpm: cappedWpm, capped } = getEffectiveWpm(partComplexity, partWpm);
     const speedCappedNote = document.getElementById('speed-capped-note');
     effectivePartWpm = cappedWpm;
     document.getElementById('current-speed').textContent = effectivePartWpm;
@@ -342,10 +344,8 @@ function adjustWpm(delta) {
     if (!screens.reading.classList.contains('active')) return;
     partWpm = Math.max(MIN_WPM, partWpm + delta);
 
-    // Recompute effective WPM with complexity cap
-    const texts = getTexts();
-    const part = texts[currentTextIndex].parts[currentPart];
-    const { wpm: cappedWpm, capped } = getEffectiveWpm(part.text, partWpm);
+    // Recompute effective WPM with cached complexity cap (O(1) — no text re-scan)
+    const { wpm: cappedWpm, capped } = getEffectiveWpm(partComplexity, partWpm);
     effectivePartWpm = cappedWpm;
     document.getElementById('current-speed').textContent = effectivePartWpm;
     document.getElementById('speed-capped-note').classList.toggle('hidden', !capped);
