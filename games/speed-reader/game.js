@@ -64,6 +64,7 @@ let currentTextIndex = -1;
 let currentPart = 0;
 let partWpm = progress.wpm;
 let partResults = [];
+let confidenceResults = [];
 let wordTimer = null;
 
 // Reading-screen state (lifted to module level for controls)
@@ -153,6 +154,7 @@ function startRound() {
     currentPart = 0;
     partWpm = progress.wpm;
     partResults = [];
+    confidenceResults = [];
     startPart();
 }
 
@@ -324,9 +326,7 @@ function startPart() {
     effectivePartWpm = cappedWpm;
     document.getElementById('current-speed').textContent = effectivePartWpm;
     speedCappedNote.classList.toggle('hidden', !capped);
-    speedCappedNote.textContent = capped
-        ? `Effective speed: ${effectivePartWpm} WPM (target: ${partWpm} WPM)`
-        : '';
+    if (capped) speedCappedNote.textContent = t('speedCapped');
 
     readingWords = part.text.split(/\s+/).filter(Boolean);
     readingWordIndex = 0;
@@ -594,7 +594,7 @@ function showSummary() {
     if (!progress.usedTexts[lang]) progress.usedTexts[lang] = [];
     progress.usedTexts[lang].push(currentTextIndex);
 
-    updateAnalytics({ lang, wpm: newWpm, correctCount, totalParts: 3 });
+    updateAnalytics({ lang, wpm: newWpm, correctCount, totalParts: 3, confidence: confidenceResults.slice() });
 
     saveProgress(progress);
     updateHeader();
@@ -683,7 +683,10 @@ document.getElementById('btn-start').addEventListener('click', startRound);
 document.getElementById('btn-calibrate').addEventListener('click', startDiagnostic);
 
 document.querySelectorAll('.confidence-btn').forEach(btn => {
-    btn.addEventListener('click', proceedFromFeedback);
+    btn.addEventListener('click', () => {
+        confidenceResults.push(parseInt(btn.dataset.level, 10));
+        proceedFromFeedback();
+    });
 });
 
 const speedSlider = document.getElementById('speed-slider');
@@ -760,6 +763,7 @@ function updateAnalytics(session) {
         wpm: session.wpm,
         correctCount: session.correctCount,
         totalParts: session.totalParts,
+        confidence: session.confidence || [],
     });
     if (progress.history.length > 50) progress.history = progress.history.slice(-50);
 
