@@ -357,8 +357,24 @@ function togglePause() {
             clearTimeout(wordTimer);
             wordTimer = null;
         }
+        if (questionTimer !== null) {
+            clearTimeout(questionTimer);
+            questionTimer = null;
+        }
     } else {
-        showNextChunk();
+        // If reading was done (wordTimer null, no questionTimer running),
+        // restart the question delay so the question appears after resume.
+        const done = readingChunks !== null
+            ? readingChunkIndex >= readingChunks.length
+            : readingWordIndex >= readingWords.length;
+        if (done && wordTimer === null) {
+            questionTimer = setTimeout(() => {
+                questionTimer = null;
+                if (!isPaused) showQuestion();
+            }, 500);
+        } else {
+            showNextChunk();
+        }
     }
     updatePauseButton();
 }

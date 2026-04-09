@@ -28,6 +28,8 @@ const UI = {
         questionsPerRound: 'Questions per round',
         streak: 'Streak',
         readingTextLabel: 'Fill-in-the-blank sentence',
+        decreaseQuantity: 'Decrease',
+        increaseQuantity: 'Increase',
     },
     de: {
         title: 'Wort im Kontext',
@@ -58,6 +60,8 @@ const UI = {
         questionsPerRound: 'Fragen pro Runde',
         streak: 'Serie',
         readingTextLabel: 'Lückensatz',
+        decreaseQuantity: 'Verringern',
+        increaseQuantity: 'Erhöhen',
     },
     uk: {
         title: 'Слово в контексті',
@@ -88,6 +92,8 @@ const UI = {
         questionsPerRound: 'Питань за раунд',
         streak: 'Серія',
         readingTextLabel: 'Речення з пропуском',
+        decreaseQuantity: 'Зменшити',
+        increaseQuantity: 'Збільшити',
     }
 };
 

@@ -3,6 +3,25 @@ const MIN_QUESTIONS = 5;
 const MAX_QUESTIONS = 15;
 const DEFAULT_QUESTIONS = 10;
 
+function extractVisibleWords(puzzle) {
+    var sentenceWords = puzzle.sentence
+        .replace(/___/g, '')
+        .split(/\s+/)
+        .map(function (w) { return w.replace(/[^a-zA-Z\u00C0-\u024F\u0400-\u04FF'-]/g, '').toLowerCase(); })
+        .filter(function (w) { return w.length > 0; });
+    var optionWords = puzzle.options.map(function (w) { return w.toLowerCase(); });
+    var seen = {};
+    var result = [];
+    var all = sentenceWords.concat(optionWords);
+    for (var i = 0; i < all.length; i++) {
+        if (!seen[all[i]]) {
+            seen[all[i]] = true;
+            result.push(all[i]);
+        }
+    }
+    return result;
+}
+
 function loadProgress() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -29,6 +48,7 @@ const progress = loadProgress();
 const urlLang = new URLSearchParams(window.location.search).get('lang');
 let lang = urlLang || localStorage.getItem('app-language') || progress.lang || 'en';
 if (!UI[lang]) lang = 'en';
+progress.lang = lang;
 
 function t(key) {
     return (UI[lang] && UI[lang][key]) || (UI.en && UI.en[key]) || key;
@@ -195,6 +215,14 @@ function handleAnswer(chosen, btn) {
     roundHistory.push({ correct: isCorrect, chosen });
     progress.totalPlayed++;
     if (isCorrect) progress.totalScore++;
+
+    if (window.VocabTracker) {
+        VocabTracker.recordWords({
+            words: extractVisibleWords(puzzle),
+            lang: lang,
+            correct: isCorrect
+        });
+    }
     updateStatsDisplay();
     saveProgress();
 

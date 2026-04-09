@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabulary</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#1a1a2e">
+    <link rel="apple-touch-icon" href="../icons/icon-192-v2.png">
+</head>
+<body>
+    <header>
+        <a href="../index.html" class="back-link" data-ui="backToGames">&larr; Back to Games</a>
+        <h1 data-ui="title">Your Vocabulary</h1>
+        <div class="lang-selector">
+            <label for="lang-select" data-ui="language">Language</label>
+            <select id="lang-select">
+                <option value="en">English</option>
+                <option value="de">Deutsch</option>
+                <option value="uk">Українська</option>
+            </select>
+        </div>
+    </header>
+
+    <main>
+        <div class="stats-bar" id="stats-bar"></div>
+
+        <div class="filters" id="filters">
+            <button class="filter-btn active" data-filter="all" data-ui="filterAll">All</button>
+            <button class="filter-btn" data-filter="mastered" data-ui="filterMastered">Mastered</button>
+            <button class="filter-btn" data-filter="learning" data-ui="filterLearning">Learning</button>
+            <button class="filter-btn" data-filter="new" data-ui="filterNew">New</button>
+        </div>
+
+        <div class="word-list" id="word-list"></div>
+
+        <p class="empty-state hidden" id="empty-state" data-ui="emptyState">
+            Play some games to start building your vocabulary!
+        </p>
+    </main>
+
+    <script src="../vocab-tracker.js"></script>
+    <script src="app.js"></script>
+    <script data-goatcounter="https://bogdangi.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

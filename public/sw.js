@@ -1,10 +1,11 @@
-const CACHE_NAME = 'web-games-v3';
+const CACHE_NAME = 'web-games-v6';
 
 const ASSET_PATHS = [
     './',
     'index.html',
     'style.css',
     'app.js',
+    'vocab-tracker.js',
     'manifest.json',
     'games/speed-reader/index.html',
     'games/speed-reader/style.css',
@@ -17,6 +18,9 @@ const ASSET_PATHS = [
     'games/word-in-context/style.css',
     'games/word-in-context/game.js',
     'games/word-in-context/i18n.js',
+    'vocabulary/index.html',
+    'vocabulary/style.css',
+    'vocabulary/app.js',
 ];
 
 self.addEventListener('install', (event) => {

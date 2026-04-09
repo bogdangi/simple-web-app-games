@@ -6,18 +6,36 @@ const APP_UI = {
         subtitle: 'Pick a game and have fun!',
         noGames: 'No games yet. Time to build some!',
         language: 'Language',
+        vocabTitle: 'Your Vocabulary',
+        vocabWords: 'words',
+        vocabMastered: 'mastered',
+        vocabLearning: 'learning',
+        vocabViewAll: 'View all words',
+        gamesListLabel: 'Games list',
     },
     de: {
         title: 'Einfache Webspiele',
         subtitle: 'W\u00e4hle ein Spiel und hab Spa\u00df!',
         noGames: 'Noch keine Spiele. Zeit, welche zu bauen!',
         language: 'Sprache',
+        vocabTitle: 'Dein Wortschatz',
+        vocabWords: 'W\u00f6rter',
+        vocabMastered: 'gemeistert',
+        vocabLearning: 'lernend',
+        vocabViewAll: 'Alle W\u00f6rter ansehen',
+        gamesListLabel: 'Spieleliste',
     },
     uk: {
         title: '\u041f\u0440\u043e\u0441\u0442\u0456 \u0432\u0435\u0431-\u0456\u0433\u0440\u0438',
         subtitle: '\u041e\u0431\u0438\u0440\u0430\u0439 \u0433\u0440\u0443 \u0456 \u0440\u043e\u0437\u0432\u0430\u0436\u0430\u0439\u0441\u044f!',
         noGames: '\u0406\u0433\u043e\u0440 \u043f\u043e\u043a\u0438 \u043d\u0435\u043c\u0430\u0454. \u0427\u0430\u0441 \u0441\u0442\u0432\u043e\u0440\u0438\u0442\u0438!',
         language: '\u041c\u043e\u0432\u0430',
+        vocabTitle: '\u0422\u0432\u0456\u0439 \u0441\u043b\u043e\u0432\u043d\u0438\u043a',
+        vocabWords: '\u0441\u043b\u0456\u0432',
+        vocabMastered: '\u0432\u0438\u0432\u0447\u0435\u043d\u043e',
+        vocabLearning: '\u0432\u0438\u0432\u0447\u0430\u0454\u0442\u044c\u0441\u044f',
+        vocabViewAll: '\u041f\u0435\u0440\u0435\u0433\u043b\u044f\u043d\u0443\u0442\u0438 \u0432\u0441\u0456 \u0441\u043b\u043e\u0432\u0430',
+        gamesListLabel: '\u0421\u043f\u0438\u0441\u043e\u043a \u0456\u0433\u043e\u0440',
     }
 };
 
@@ -61,6 +79,32 @@ function updateUI() {
         if (text) el.textContent = text;
     });
     renderGames();
+    renderVocab();
+}
+
+function renderVocab() {
+    if (!window.VocabTracker) return;
+    const card = document.getElementById('vocab-card');
+    const allWords = VocabTracker.getAllWords();
+
+    if (allWords.length === 0) {
+        card.classList.add('hidden');
+        return;
+    }
+    card.classList.remove('hidden');
+
+    var mastered = 0, learning = 0;
+    for (var i = 0; i < allWords.length; i++) {
+        if (allWords[i].mastery === 'mastered') mastered++;
+        else if (allWords[i].mastery === 'learning') learning++;
+    }
+
+    const statsEl = document.getElementById('vocab-stats');
+    statsEl.innerHTML =
+        '<span class="vocab-stat-chip">' + allWords.length + ' ' + t('vocabWords') + '</span>' +
+        '<span class="vocab-stat-chip mastered">' + mastered + ' ' + t('vocabMastered') + '</span>' +
+        '<span class="vocab-stat-chip learning">' + learning + ' ' + t('vocabLearning') + '</span>' +
+        '<span class="vocab-view-all">' + t('vocabViewAll') + ' \u2192</span>';
 }
 
 function renderGames() {

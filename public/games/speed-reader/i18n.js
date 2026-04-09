@@ -74,6 +74,7 @@ const UI = {
         pushForward: 'Push forward \u2191',
         maintain: 'Maintain \u2192',
         slowDown: 'Slow down \u2193',
+        readingTextLabel: 'Reading text',
     },
     de: {
         title: 'Lese-Trainer',
@@ -148,6 +149,7 @@ const UI = {
         pushForward: 'Weiter pushen \u2191',
         maintain: 'Beibehalten \u2192',
         slowDown: 'Langsamer \u2193',
+        readingTextLabel: 'Lesetext',
     },
     uk: {
         title: '\u0422\u0440\u0435\u043d\u0430\u0436\u0435\u0440 \u0447\u0438\u0442\u0430\u043d\u043d\u044f',
@@ -222,5 +224,6 @@ const UI = {
         pushForward: '\u041f\u0440\u0438\u0441\u043a\u043e\u0440\u0438\u0442\u0438 \u2191',
         maintain: '\u0422\u0440\u0438\u043c\u0430\u0442\u0438 \u2192',
         slowDown: '\u0421\u043f\u043e\u0432\u0456\u043b\u044c\u043d\u0438\u0442\u0438 \u2193',
+        readingTextLabel: '\u0422\u0435\u043a\u0441\u0442 \u0434\u043b\u044f \u0447\u0438\u0442\u0430\u043d\u043d\u044f',
     }
 };

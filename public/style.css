@@ -104,3 +104,66 @@ main {
     color: #aaa;
     font-size: 0.9rem;
 }
+
+/* ── Vocabulary card (home page) ── */
+.vocab-card {
+    display: block;
+    background: #16213e;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    margin-top: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.vocab-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.vocab-card:focus-visible {
+    outline: 2px solid #4ecca3;
+    outline-offset: 3px;
+}
+
+.vocab-card h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+}
+
+.vocab-card-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.vocab-stat-chip {
+    background: #1a2a40;
+    border: 1px solid #2a3a5e;
+    border-radius: 20px;
+    padding: 0.25rem 0.7rem;
+    font-size: 0.82rem;
+    color: #ccc;
+}
+
+.vocab-stat-chip.mastered {
+    color: #4ecca3;
+    border-color: #2a5e4a;
+}
+
+.vocab-stat-chip.learning {
+    color: #f39c12;
+    border-color: #5e4a2a;
+}
+
+.vocab-view-all {
+    font-size: 0.85rem;
+    color: #4ecca3;
+    margin-left: auto;
+}
+
+.hidden {
+    display: none;
+}
